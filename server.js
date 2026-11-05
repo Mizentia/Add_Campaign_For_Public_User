@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { MIME_TYPES, getLocalIPv4 } = require('./scripts/server-utils.js');
-const { handleOrderSubmission, handleGetOrders } = require('./scripts/campaign-api.js');
+const { handleOrderSubmission, handleGetOrders, handleGetSettings } = require('./scripts/campaign-api.js');
 
 const PORT = Number(process.env.PORT) || 8088;
 const isLocalOnly = process.argv.includes('--local-only');
@@ -19,6 +19,7 @@ const server = http.createServer((req, res) => {
 
   if (urlPath === '/api/submit-order' && req.method === 'POST') return handleOrderSubmission(req, res);
   if (urlPath === '/api/orders' && req.method === 'GET') return handleGetOrders(req, res);
+  if (urlPath === '/api/campaign-settings' && req.method === 'GET') return handleGetSettings(req, res);
   if (urlPath === '/api/server-info' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ success: true, port: currentPort, ip: getLocalIPv4(), service: 'Add Campaign Public Portal' }));

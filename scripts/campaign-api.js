@@ -3,6 +3,8 @@ const path = require('path');
 const { parseJson } = require('./server-utils');
 
 const ORDERS_FILE = path.join(__dirname, '..', 'data', 'public-orders.json');
+const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'campaign-settings.json');
+const STUDIO_SETTINGS_FILE = path.join(__dirname, '..', '..', 'NL_Admin_Studio', 'data', 'portal-settings.json');
 
 function ensureDataDir() {
   const dir = path.dirname(ORDERS_FILE);
@@ -43,7 +45,7 @@ async function handleOrderSubmission(req, res) {
     platform: body.platform,
     targetAudience: body.targetAudience || 'General Audience',
     budgetUSD: Number(body.budgetUSD) || 10,
-    durationDays: Number(body.durationDays) || 3,
+    durationDays: Number(body.durationDays) || 4,
     pageOrPostUrl: body.pageOrPostUrl || '',
     notes: body.notes || '',
     status: 'pending',
@@ -54,8 +56,6 @@ async function handleOrderSubmission(req, res) {
   const orders = getStoredOrders();
   orders.unshift(order);
   fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders.slice(0, 500), null, 2), 'utf8');
-
-  // Async forward to NL Admin Studio
   forwardOrderToStudio(order).catch(() => {});
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -68,4 +68,21 @@ function handleGetOrders(req, res) {
   return res.end(JSON.stringify({ success: true, orders }));
 }
 
-module.exports = { handleOrderSubmission, handleGetOrders };
+function handleGetSettings(req, res) {
+  let settings = null;
+  try {
+    if (fs.existsSync(SETTINGS_FILE)) settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8'));
+  } catch (_) {}
+  if (!settings) {
+    try {
+      if (fs.existsSync(STUDIO_SETTINGS_FILE)) {
+        const portal = JSON.parse(fs.readFileSync(STUDIO_SETTINGS_FILE, 'utf8'));
+        if (portal?.campaign) settings = portal.campaign;
+      }
+    } catch (_) {}
+  }
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  return res.end(JSON.stringify({ success: true, settings: settings || {} }));
+}
+
+module.exports = { handleOrderSubmission, handleGetOrders, handleGetSettings };
