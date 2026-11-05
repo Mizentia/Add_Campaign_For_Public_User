@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   let currentLang = localStorage.getItem('nl_camp_lang') || 'bn', currentTheme = localStorage.getItem('nl_camp_theme') || 'dark';
   let selectedPlatform = 'Facebook', currencies = window.DEFAULT_CAMPAIGN_CURRENCIES, activeCurr = currencies[0];
   const supportInfo = { phone: '+880 1700-000000', fb: 'https://facebook.com/nokshalab', email: 'support@nokshalab.com' };
-
   const toEnNum = (s) => String(s ?? '').replace(/[০-৯]/g, d => bnDigits.indexOf(d));
   const toLocNum = (s, lang = currentLang) => lang === 'bn' ? String(s).replace(/[0-9]/g, d => bnDigits[d]) : toEnNum(s);
   const tr = (key) => (window.CAMPAIGN_I18N?.[currentLang]?.[key]) || key;
@@ -22,11 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const renderCurrencies = () => {
     const row = document.getElementById('currencySelect');
     if (!row) return;
-    row.innerHTML = currencies.map(c => {
-      const flag = window.CURRENCY_FLAGS[c.code] || window.CURRENCY_FLAGS.DEFAULT;
-      const fullName = currentLang === 'bn' ? (c.nameBn || c.code) : (c.nameEn || c.nameBn || c.code);
-      return `<button type="button" class="curr-btn ${c.code === activeCurr.code ? 'active' : ''}" data-curr="${c.code}">${flag}<span class="curr-sym">${c.sym}</span><span class="curr-code">${c.code}</span><span class="curr-full">• ${fullName}</span></button>`;
-    }).join('');
+    row.innerHTML = currencies.map(c => `<button type="button" class="curr-btn ${c.code === activeCurr.code ? 'active' : ''}" data-curr="${c.code}">${window.CURRENCY_FLAGS[c.code] || window.CURRENCY_FLAGS.DEFAULT}<span class="curr-sym">${c.sym}</span><span class="curr-code">${c.code}</span><span class="curr-full">• ${currentLang === 'bn' ? (c.nameBn || c.code) : (c.nameEn || c.nameBn || c.code)}</span></button>`).join('');
     row.querySelectorAll('.curr-btn').forEach(btn => btn.addEventListener('click', () => {
       const next = currencies.find(c => c.code === btn.dataset.curr);
       if (!next || next.code === activeCurr.code) return;
@@ -108,7 +103,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!list.length) return showModal(tr('modal_orders_title'), `<p style="padding:10px;color:var(--text-muted);">${tr('modal_empty')}</p>`);
     showModal(tr('modal_orders_title'), list.map(o => `<div class="order-pill"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><strong>${toLocNum(o.id)}</strong><span class="status-badge ${o.status}">${tr('status_' + o.status) || o.status}</span></div><div>${o.platform} - $${toLocNum(o.budgetUSD)} (${toLocNum(o.durationDays)} ${tr('lbl_days')})</div><small style="color:var(--text-muted);">${tr('lbl_customer')} ${o.customerName} | ${toLocNum(o.customerPhone)}</small></div>`).join(''));
   });
-
   const remoteList = await window.fetchStudioCampaignCurrencies(), activeList = remoteList.filter(c => c.enabled !== false);
   if (activeList.length) { currencies = activeList; activeCurr = currencies[0]; }
   applyLanguage(currentLang); syncSliderBounds();
