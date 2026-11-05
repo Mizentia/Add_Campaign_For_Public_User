@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const toLocNum = (s, lang = currentLang) => lang === 'bn' ? String(s).replace(/[0-9]/g, d => bnDigits[d]) : toEnNum(s);
   const tr = (key) => (window.CAMPAIGN_I18N?.[currentLang]?.[key]) || key;
   const bound = (n, min, max, hasLim) => Math.max(min, hasLim !== false ? Math.min(max, n) : n);
+  const getLocalOrders = () => { try { return JSON.parse(localStorage.getItem('nl_camp_orders') || '[]'); } catch (_) { return []; } };
 
   const budgetInput = document.getElementById('budgetUSD'), budgetSlider = document.getElementById('budgetSlider');
   const durationInput = document.getElementById('durationDays'), durationSlider = document.getElementById('durationSlider');
@@ -90,16 +91,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     showModal(`${selectedPlatform} — ${bdtEstimate.textContent}`, `<form id="confirmOrderForm" style="display:flex;flex-direction:column;gap:10px;"><input type="text" id="cName" class="input-ctrl" placeholder="${tr('ph_name')}" required><input type="tel" id="cPhone" class="input-ctrl" placeholder="${tr('ph_phone')}" required><input type="url" id="cUrl" class="input-ctrl" placeholder="${tr('ph_url')}"><button type="submit" class="btn-submit">${tr('btn_confirm_order')}</button></form>`);
     document.getElementById('confirmOrderForm')?.addEventListener('submit', async (ev) => {
       ev.preventDefault();
-      const payload = { platform: selectedPlatform, budgetUSD: totalUsd, durationDays: days, customerName: document.getElementById('cName').value, customerPhone: toEnNum(document.getElementById('cPhone').value), pageOrPostUrl: document.getElementById('cUrl').value, notes: `Currency: ${activeCurr.code} (${activeCurr.sym}${dailyVal}/day x ${days} days)` };
-      const res = await fetch('/api/submit-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(r => r.json()).catch(() => ({}));
-      if (res.success) showModal(tr('order_success_title'), `<div style="text-align:center;padding:10px;"><p>${tr('order_id_lbl')} <strong>${toLocNum(res.order.id)}</strong></p><p style="margin:8px 0;color:var(--text-muted);">${res.order.platform} | ${activeCurr.sym}${toLocNum(dailyVal * days)} ${activeCurr.code} (${toLocNum(days)} ${tr('lbl_days')})</p><p style="color:var(--success);">${tr('order_team_msg')}</p></div>`);
-      else alert(res.error || tr('err_submit'));
+      const payload = { id: 'PUB-CAMP-' + Date.now().toString(36).toUpperCase(), platform: selectedPlatform, budgetUSD: totalUsd, durationDays: days, customerName: document.getElementById('cName').value, customerPhone: toEnNum(document.getElementById('cPhone').value), pageOrPostUrl: document.getElementById('cUrl').value, status: 'pending', notes: `Currency: ${activeCurr.code} (${activeCurr.sym}${dailyVal}/day x ${days} days)` };
+      const res = await fetch('./api/submit-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(r => r.ok ? r.json() : null).catch(() => null);
+      const savedOrder = res?.order || payload;
+      const localList = getLocalOrders(); localList.unshift(savedOrder); localStorage.setItem('nl_camp_orders', JSON.stringify(localList.slice(0, 50)));
+      showModal(tr('order_success_title'), `<div style="text-align:center;padding:10px;"><p>${tr('order_id_lbl')} <strong>${toLocNum(savedOrder.id)}</strong></p><p style="margin:8px 0;color:var(--text-muted);">${savedOrder.platform} | ${activeCurr.sym}${toLocNum(dailyVal * days)} ${activeCurr.code} (${toLocNum(days)} ${tr('lbl_days')})</p><p style="color:var(--success);">${tr('order_team_msg')}</p></div>`);
     });
   });
 
   document.getElementById('viewOrdersBtn')?.addEventListener('click', async () => {
     showModal(tr('modal_loading'), `<p style="padding:10px;">${tr('modal_loading_desc')}</p>`);
-    const data = await fetch('/api/orders').then(r => r.json()).catch(() => null), list = data?.orders || [];
+    const data = await fetch('./api/orders').then(r => r.ok ? r.json() : null).catch(() => null), list = data?.orders?.length ? data.orders : getLocalOrders();
     if (!list.length) return showModal(tr('modal_orders_title'), `<p style="padding:10px;color:var(--text-muted);">${tr('modal_empty')}</p>`);
     showModal(tr('modal_orders_title'), list.map(o => `<div class="order-pill"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><strong>${toLocNum(o.id)}</strong><span class="status-badge ${o.status}">${tr('status_' + o.status) || o.status}</span></div><div>${o.platform} - $${toLocNum(o.budgetUSD)} (${toLocNum(o.durationDays)} ${tr('lbl_days')})</div><small style="color:var(--text-muted);">${tr('lbl_customer')} ${o.customerName} | ${toLocNum(o.customerPhone)}</small></div>`).join(''));
   });

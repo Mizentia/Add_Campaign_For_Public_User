@@ -19,14 +19,32 @@ window.CURRENCY_FLAGS = {
   DEFAULT: '<svg class="flag-svg" viewBox="0 0 24 16"><rect width="24" height="16" rx="2" fill="#3b82f6"/><circle cx="12" cy="8" r="4.5" fill="none" stroke="#fff" stroke-width="1.4"/></svg>'
 };
 
+function parseFsVal(v) {
+  if (!v) return null;
+  if ('stringValue' in v) return v.stringValue;
+  if ('integerValue' in v) return Number(v.integerValue);
+  if ('doubleValue' in v) return Number(v.doubleValue);
+  if ('booleanValue' in v) return Boolean(v.booleanValue);
+  if ('arrayValue' in v) return (v.arrayValue.values || []).map(parseFsVal);
+  if ('mapValue' in v) {
+    const out = {};
+    for (const [k, val] of Object.entries(v.mapValue.fields || {})) out[k] = parseFsVal(val);
+    return out;
+  }
+  return null;
+}
+
 window.fetchStudioCampaignCurrencies = async function () {
+  for (const url of ['./api/campaign-settings', 'http://localhost:3001/api/campaign-settings']) {
+    try {
+      const r = await fetch(url).then(x => x.ok ? x.json() : null);
+      if (Array.isArray(r?.settings?.currencies) && r.settings.currencies.length) return r.settings.currencies;
+    } catch (_) {}
+  }
   try {
-    const r = await fetch('/api/campaign-settings').then(x => x.json());
-    if (Array.isArray(r?.settings?.currencies) && r.settings.currencies.length) return r.settings.currencies;
-  } catch (_) {}
-  try {
-    const r2 = await fetch('http://localhost:3001/api/campaign-settings').then(x => x.json());
-    if (Array.isArray(r2?.settings?.currencies) && r2.settings.currencies.length) return r2.settings.currencies;
+    const fsRes = await fetch('https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents/ecosystem/portalSettings').then(x => x.ok ? x.json() : null);
+    const parsed = parseFsVal(fsRes?.fields?.value);
+    if (Array.isArray(parsed?.campaign?.currencies) && parsed.campaign.currencies.length) return parsed.campaign.currencies;
   } catch (_) {}
   return window.DEFAULT_CAMPAIGN_CURRENCIES;
 };
