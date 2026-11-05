@@ -1,0 +1,12 @@
+{
+  "name": "add-campaign-for-public-user",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Noksha Lab - Online Ad Campaign Portal for Public Customers",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js --open",
+    "verify": "node scripts/verify-syntax.js && node scripts/audit-line-counts.js"
+  },
+  "dependencies": {}
+}

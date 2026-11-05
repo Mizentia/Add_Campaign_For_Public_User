@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>নকশা ল্যাব - অনলাইন অ্যাড ক্যাম্পেইন সেলফ-সার্ভিস</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo-icon">🚀</span>
+        <div><h1>নকশা ল্যাব অ্যাড ক্যাম্পেইন</h1><p>পাবলিক ক্লায়েন্ট সেলফ-সার্ভিস বুস্টিং পোর্টাল</p></div>
+      </div>
+      <button id="viewOrdersBtn" class="btn-ghost">📋 আমার অর্ডারসমূহ</button>
+    </header>
+
+    <main class="main-content">
+      <section class="card campaign-builder">
+        <h2>নতুন ক্যাম্পেইন অর্ডার তৈরি করুন</h2>
+        <p class="subtitle">আপনার ফেসবুক, গুগল, টিকটক বা ইউটিউব বিজ্ঞাপনের বিস্তারিত দিন</p>
+        <form id="campaignForm">
+          <div class="form-group">
+            <label>প্ল্যাটফর্ম নির্বাচন করুন *</label>
+            <div class="platform-grid" id="platformSelect">
+              <button type="button" class="plat-btn active" data-plat="Facebook">📘 Facebook</button>
+              <button type="button" class="plat-btn" data-plat="Instagram">📸 Instagram</button>
+              <button type="button" class="plat-btn" data-plat="Google Ads">🔍 Google Ads</button>
+              <button type="button" class="plat-btn" data-plat="YouTube">▶️ YouTube</button>
+              <button type="button" class="plat-btn" data-plat="TikTok">🎵 TikTok</button>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>বিজ্ঞাপনের উদ্দেশ্য / গোল</label>
+              <select id="campaignGoal" class="input-ctrl">
+                <option value="Post Engagement / Message" selected>পোস্ট এঙ্গেজমেন্ট ও ইনবক্স মেসেজ</option>
+                <option value="Page Likes / Followers">পেজ লাইক ও ফলোয়ার বৃদ্ধি</option>
+                <option value="Website Traffic / Conversions">ওয়েবসাইট ট্রাফিক ও কনভার্শন</option>
+                <option value="Lead Generation">লিড সংগ্রহ ও ফর্ম ফিলাপ</option>
+                <option value="Video Views">ভিডিও ভিউ ও ওয়াচটাইম</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>টার্গেট লোকেশন</label>
+              <input type="text" id="targetAudience" class="input-ctrl" value="সমগ্র বাংলাদেশ">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>বাজেট (USD ডলার) *</label>
+              <input type="number" id="budgetUSD" class="input-ctrl" min="5" value="10" required>
+              <span class="calc-hint" id="bdtEstimate">আনুমানিক: ১২৫০ টাকা</span>
+            </div>
+            <div class="form-group">
+              <label>মেয়াদ (দিন) *</label>
+              <input type="number" id="durationDays" class="input-ctrl" min="1" max="30" value="3" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>পেজ লিঙ্ক অথবা পোস্ট লিঙ্ক *</label>
+            <input type="url" id="pageOrPostUrl" class="input-ctrl" placeholder="https://..." required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>আপনার নাম *</label>
+              <input type="text" id="customerName" class="input-ctrl" placeholder="পুরো নাম" required>
+            </div>
+            <div class="form-group">
+              <label>মোবাইল / হোয়াটসঅ্যাপ নম্বর *</label>
+              <input type="tel" id="customerPhone" class="input-ctrl" placeholder="01XXXXXXXXX" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>বিশেষ নির্দেশনা / নোট</label>
+            <textarea id="notes" class="input-ctrl" rows="2" placeholder="অতিরিক্ত পরামর্শ..."></textarea>
+          </div>
+          <button type="submit" id="submitBtn" class="btn-submit">🚀 ক্যাম্পেইন অর্ডার প্লেস করুন</button>
+        </form>
+      </section>
+    </main>
+
+    <div id="orderModal" class="modal-backdrop hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="modalTitle">অর্ডার হিস্টোরি</h3>
+          <button id="closeModalBtn" class="btn-close">&times;</button>
+        </div>
+        <div id="modalBody" class="modal-body"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/app.js"></script>
+</body>
+</html>
