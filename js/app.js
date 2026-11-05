@@ -20,12 +20,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.addEventListener('click', (e) => { if (!menuDropdown?.contains(e.target) && e.target !== menuToggleBtn) menuDropdown?.classList.add('hidden'); });
 
   const renderCurrencies = () => {
-    const row = document.getElementById('currencySelect');
-    if (!row) return;
+    const row = document.getElementById('currencySelect'); if (!row) return;
     row.innerHTML = currencies.map(c => `<button type="button" class="curr-btn ${c.code === activeCurr.code ? 'active' : ''}" data-curr="${c.code}">${window.CURRENCY_FLAGS[c.code] || window.CURRENCY_FLAGS.DEFAULT}<span class="curr-sym">${c.sym}</span><span class="curr-code">${c.code}</span><span class="curr-full">• ${currentLang === 'bn' ? (c.nameBn || c.code) : (c.nameEn || c.nameBn || c.code)}</span></button>`).join('');
     row.querySelectorAll('.curr-btn').forEach(btn => btn.addEventListener('click', () => {
-      const next = currencies.find(c => c.code === btn.dataset.curr);
-      if (!next || next.code === activeCurr.code) return;
+      const next = currencies.find(c => c.code === btn.dataset.curr); if (!next || next.code === activeCurr.code) return;
       const prevBdt = (Number(toEnNum(budgetInput.value).replace(/[^0-9.]/g, '')) || activeCurr.minBudget) * activeCurr.rate;
       activeCurr = next; renderCurrencies(); syncSliderBounds(Math.round(prevBdt / activeCurr.rate));
     }));
@@ -51,17 +49,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (currentLang === 'bn') {
       bdtEstimate.textContent = code === 'BDT' ? `মোট বাজেট: ৳${toLocNum(totalBdt, 'bn')} টাকা` : `মোট বাজেট: ${sym}${toLocNum(totalCurr, 'bn')} ${code} = ${toLocNum(totalBdt, 'bn')} টাকা`;
       bdtRateHint.textContent = code === 'BDT' ? `দৈনিক ৳${toLocNum(dailyVal, 'bn')} × ${toLocNum(days, 'bn')} দিন` : `দৈনিক ${sym}${toLocNum(dailyVal, 'bn')} × ${toLocNum(days, 'bn')} দিন (১ ${code} = ${toLocNum(rate, 'bn')} ৳)`;
-      document.getElementById('minBudgetTick').textContent = `${sym}${toLocNum(minBudget, 'bn')}`;
-      document.getElementById('maxBudgetTick').textContent = `${sym}${toLocNum(maxBudget, 'bn')}${maxSuf}`;
-      document.getElementById('minDaysTick').textContent = `${toLocNum(minDays, 'bn')} দিন`;
-      document.getElementById('maxDaysTick').textContent = `${toLocNum(maxDays, 'bn')}${maxSuf} দিন`;
+      document.getElementById('minBudgetTick').textContent = `${sym}${toLocNum(minBudget, 'bn')}`; document.getElementById('maxBudgetTick').textContent = `${sym}${toLocNum(maxBudget, 'bn')}${maxSuf}`;
+      document.getElementById('minDaysTick').textContent = `${toLocNum(minDays, 'bn')} দিন`; document.getElementById('maxDaysTick').textContent = `${toLocNum(maxDays, 'bn')}${maxSuf} দিন`;
     } else {
       bdtEstimate.textContent = code === 'BDT' ? `Total Budget: ৳${totalBdt} BDT` : `Total Budget: ${sym}${totalCurr} ${code} = ${totalBdt} BDT`;
       bdtRateHint.textContent = code === 'BDT' ? `Daily ৳${dailyVal} × ${days} Days` : `Daily ${sym}${dailyVal} × ${days} Days (1 ${code} = ${rate} BDT)`;
-      document.getElementById('minBudgetTick').textContent = `${sym}${minBudget}`;
-      document.getElementById('maxBudgetTick').textContent = `${sym}${maxBudget}${maxSuf}`;
-      document.getElementById('minDaysTick').textContent = `${minDays} Days`;
-      document.getElementById('maxDaysTick').textContent = `${maxDays}${maxSuf} Days`;
+      document.getElementById('minBudgetTick').textContent = `${sym}${minBudget}`; document.getElementById('maxBudgetTick').textContent = `${sym}${maxBudget}${maxSuf}`;
+      document.getElementById('minDaysTick').textContent = `${minDays} Days`; document.getElementById('maxDaysTick').textContent = `${maxDays}${maxSuf} Days`;
     }
   };
 
@@ -92,8 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('confirmOrderForm')?.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const payload = { id: 'PUB-CAMP-' + Date.now().toString(36).toUpperCase(), platform: selectedPlatform, budgetUSD: totalUsd, durationDays: days, customerName: document.getElementById('cName').value, customerPhone: toEnNum(document.getElementById('cPhone').value), pageOrPostUrl: document.getElementById('cUrl').value, status: 'pending', notes: `Currency: ${activeCurr.code} (${activeCurr.sym}${dailyVal}/day x ${days} days)` };
-      const res = await fetch('./api/submit-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(r => r.ok ? r.json() : null).catch(() => null);
-      const savedOrder = res?.order || payload;
+      const res = await fetch('./api/submit-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(r => r.ok ? r.json() : null).catch(() => null), savedOrder = res?.order || payload;
       const localList = getLocalOrders(); localList.unshift(savedOrder); localStorage.setItem('nl_camp_orders', JSON.stringify(localList.slice(0, 50)));
       showModal(tr('order_success_title'), `<div style="text-align:center;padding:10px;"><p>${tr('order_id_lbl')} <strong>${toLocNum(savedOrder.id)}</strong></p><p style="margin:8px 0;color:var(--text-muted);">${savedOrder.platform} | ${activeCurr.sym}${toLocNum(dailyVal * days)} ${activeCurr.code} (${toLocNum(days)} ${tr('lbl_days')})</p><p style="color:var(--success);">${tr('order_team_msg')}</p></div>`);
     });
