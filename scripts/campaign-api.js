@@ -1,88 +1,86 @@
 const fs = require('fs');
 const path = require('path');
 const { parseJson } = require('./server-utils');
+const { studioFetch, forwardOrder, queueOrder, flushQueue, fetchStatuses } = require('./studio-bridge');
 
-const ORDERS_FILE = path.join(__dirname, '..', 'data', 'public-orders.json');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'campaign-settings.json');
-const STUDIO_SETTINGS_FILE = path.join(__dirname, '..', '..', 'NL_Admin_Studio', 'data', 'portal-settings.json');
+const COOLDOWN_MS = 60 * 1000;
+const rateLimitMap = new Map();
 
-function ensureDataDir() {
-  const dir = path.dirname(ORDERS_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, '[]', 'utf8');
+const sendJson = (res, status, body) => {
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+  return res.end(JSON.stringify(body));
+};
+const str = (v, max = 160) => String(v ?? '').trim().slice(0, max);
+const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
+
+function getClientKey(req, visitorId) {
+  const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  const ip = fwd || req.socket?.remoteAddress || 'unknown';
+  return `${ip}|${visitorId || 'anon'}`;
 }
 
-function getStoredOrders() {
-  ensureDataDir();
-  try { return JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8') || '[]'); } catch (_) { return []; }
-}
-
-async function forwardOrderToStudio(order) {
-  const urls = [process.env.ADMIN_STUDIO_URL, 'http://127.0.0.1:3001', 'http://localhost:3001'].filter(Boolean);
-  for (const u of urls) {
-    try {
-      const res = await fetch(`${u}/api/campaign-orders`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Source': 'public-portal' },
-        body: JSON.stringify(order)
-      });
-      if (res.ok) return await res.json();
-    } catch (_) {}
-  }
-  return null;
+function checkRateLimit(req, visitorId) {
+  const now = Date.now(), ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'ip';
+  for (const [k, ts] of rateLimitMap.entries()) { if (now - ts > COOLDOWN_MS) rateLimitMap.delete(k); }
+  const lastTs = Math.max(rateLimitMap.get(ip) || 0, visitorId ? (rateLimitMap.get(visitorId) || 0) : 0);
+  if (now - lastTs < COOLDOWN_MS) return Math.ceil((COOLDOWN_MS - (now - lastTs)) / 1000);
+  rateLimitMap.set(ip, now);
+  if (visitorId) rateLimitMap.set(visitorId, now);
+  return 0;
 }
 
 async function handleOrderSubmission(req, res) {
   const body = await parseJson(req);
-  if (!body.customerName || !body.customerPhone || !body.platform) {
-    res.writeHead(400, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify({ success: false, error: 'Missing required fields' }));
-  }
+  const customerName = str(body.customerName, 80), visitorId = str(body.visitorId, 60);
+  if (!customerName || !body.platform) return sendJson(res, 400, { success: false, error: 'Missing required fields' });
+  const waitSec = checkRateLimit(req, visitorId);
+  if (waitSec > 0) return sendJson(res, 429, { success: false, error: 'Cooldown active', cooldownRemaining: waitSec });
+
   const order = {
-    id: 'PUB-CAMP-' + Date.now().toString(36).toUpperCase(),
-    customerName: body.customerName.trim(),
-    customerPhone: body.customerPhone.trim(),
-    platform: body.platform,
-    targetAudience: body.targetAudience || 'General Audience',
-    budgetUSD: Number(body.budgetUSD) || 10,
-    durationDays: Number(body.durationDays) || 4,
-    pageOrPostUrl: body.pageOrPostUrl || '',
-    notes: body.notes || '',
-    status: 'pending',
-    createdAt: new Date().toISOString(),
+    id: /^PUB-[A-Z0-9-]{4,36}$/.test(String(body.id || '')) ? body.id : 'PUB-' + Date.now().toString(36).toUpperCase(),
+    customerName,
+    customerPhone: str(body.customerPhone, 30).replace(/[^+0-9]/g, ''),
+    visitorId,
+    platform: str(body.platform, 40),
+    targetAudience: 'General Audience',
+    currency: str(body.currency, 6), currencySymbol: str(body.currencySymbol, 6), rate: num(body.rate),
+    markupPercent: num(body.markupPercent), vatPercent: num(body.vatPercent),
+    dailyBudget: num(body.dailyBudget), totalAmount: num(body.totalAmount), baseBDT: num(body.baseBDT), totalBDT: num(body.totalBDT),
+    budgetUSD: num(body.budgetUSD) || 10,
+    durationDays: num(body.durationDays) || 4,
+    pageOrPostUrl: '',
+    notes: str(body.notes, 300),
+    userAgent: str(req.headers['user-agent'], 200),
+    lang: str(body.lang, 4),
+    createdAt: str(body.createdAt, 40) || new Date().toISOString(),
     source: 'public_portal'
   };
-
-  const orders = getStoredOrders();
-  orders.unshift(order);
-  fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders.slice(0, 500), null, 2), 'utf8');
-  forwardOrderToStudio(order).catch(() => {});
-
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  return res.end(JSON.stringify({ success: true, order }));
-}
-
-function handleGetOrders(req, res) {
-  const orders = getStoredOrders();
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  return res.end(JSON.stringify({ success: true, orders }));
-}
-
-function handleGetSettings(req, res) {
-  let settings = null;
-  try {
-    if (fs.existsSync(SETTINGS_FILE)) settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8'));
-  } catch (_) {}
-  if (!settings) {
-    try {
-      if (fs.existsSync(STUDIO_SETTINGS_FILE)) {
-        const portal = JSON.parse(fs.readFileSync(STUDIO_SETTINGS_FILE, 'utf8'));
-        if (portal?.campaign) settings = portal.campaign;
-      }
-    } catch (_) {}
+  const saved = await forwardOrder(order);
+  if (saved) {
+    flushQueue().catch(() => {});
+    return sendJson(res, 200, { success: true, synced: true, cooldownSec: 60, order: { ...order, ...saved } });
   }
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  return res.end(JSON.stringify({ success: true, settings: settings || {} }));
+  queueOrder(order);
+  return sendJson(res, 200, { success: true, synced: false, queued: true, cooldownSec: 60, order: { ...order, status: 'pending' } });
 }
 
-module.exports = { handleOrderSubmission, handleGetOrders, handleGetSettings };
+async function handleOrderStatus(req, res) {
+  const query = new URL(req.url, 'http://localhost').searchParams;
+  const ids = String(query.get('ids') || '').split(',').map(s => s.trim()).filter(Boolean).slice(0, 60);
+  if (!ids.length) return sendJson(res, 200, { success: true, statuses: {} });
+  const result = await fetchStatuses(ids);
+  return sendJson(res, 200, { ...result, checkedAt: new Date().toISOString() });
+}
+
+async function handleGetSettings(req, res) {
+  let settings = null;
+  try { if (fs.existsSync(SETTINGS_FILE)) settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8')); } catch (_) {}
+  if (!settings) {
+    const remote = await studioFetch('/api/campaign-settings');
+    if (remote?.settings) settings = remote.settings;
+  }
+  return sendJson(res, 200, { success: true, settings: settings || {} });
+}
+
+module.exports = { handleOrderSubmission, handleOrderStatus, handleGetSettings };

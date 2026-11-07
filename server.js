@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { MIME_TYPES, getLocalIPv4 } = require('./scripts/server-utils.js');
-const { handleOrderSubmission, handleGetOrders, handleGetSettings } = require('./scripts/campaign-api.js');
+const { handleOrderSubmission, handleOrderStatus, handleGetSettings } = require('./scripts/campaign-api.js');
 
 const PORT = Number(process.env.PORT) || 8088;
 const isLocalOnly = process.argv.includes('--local-only');
@@ -18,7 +18,7 @@ const server = http.createServer((req, res) => {
   const urlPath = decodeURI(req.url.split('?')[0]).replace(/\/+$/, '') || '/';
 
   if (urlPath === '/api/submit-order' && req.method === 'POST') return handleOrderSubmission(req, res);
-  if (urlPath === '/api/orders' && req.method === 'GET') return handleGetOrders(req, res);
+  if (urlPath === '/api/order-status' && req.method === 'GET') return handleOrderStatus(req, res);
   if (urlPath === '/api/campaign-settings' && req.method === 'GET') return handleGetSettings(req, res);
   if (urlPath === '/api/server-info' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -27,7 +27,8 @@ const server = http.createServer((req, res) => {
 
   let reqFile = urlPath === '/' ? '/index.html' : urlPath;
   const filePath = path.join(__dirname, reqFile);
-  if (!filePath.startsWith(__dirname)) {
+  const isPrivate = /^\/(data|scripts|node_modules|\.git)(\/|$)|^\/\.env|^\/server\.js$/i.test(reqFile);
+  if (!filePath.startsWith(__dirname) || isPrivate) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
     return res.end('403 Forbidden');
   }

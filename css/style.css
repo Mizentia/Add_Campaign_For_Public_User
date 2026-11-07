@@ -96,4 +96,4 @@ body { background-color: var(--bg-primary); background-image: var(--bg-gradient)
   .flag-svg { width: 15px; height: 10px; }
   .slider-box { padding: 11px 12px; margin-bottom: 10px; } .slider-head label { font-size: 0.83rem; } .input-num { width: 64px; font-size: 0.94rem; }
 }
-@media (max-width: 480px) { .btn-ghost .btn-lbl { display: none; } .btn-ghost { width: 32px; height: 32px; padding: 0; } }
+@media (max-width: 480px) { .btn-ghost:not(#viewOrdersBtn) .btn-lbl { display: none; } .btn-ghost:not(#viewOrdersBtn) { width: 32px; height: 32px; padding: 0; } #viewOrdersBtn { padding: 5px 8px; height: 32px; font-size: 0.7rem; } }

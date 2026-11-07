@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html lang="bn" data-theme="dark">
+<html lang="bn" data-theme="light">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title data-i18n="page_title">অ্যাড বুস্টিং ও অর্ডার ক্যালকুলেটর • নকশা ল্যাব</title>
   <link id="appFavicon" rel="icon" type="image/png" href="https://res.cloudinary.com/ayewcaxj/image/upload/v1793690710/NL_Add_Campaing_pkdeij.png">
   <link id="appAppleIcon" rel="apple-touch-icon" href="https://res.cloudinary.com/ayewcaxj/image/upload/v1793690710/NL_Add_Campaing_pkdeij.png">
-  <link rel="stylesheet" href="./css/theme.css">
-  <link rel="stylesheet" href="./css/style.css"><script>try{const t=localStorage.getItem('nl_camp_theme'),l=localStorage.getItem('nl_camp_lang');if(t)document.documentElement.setAttribute('data-theme',t);if(l)document.documentElement.lang=l;}catch(_){}</script>
+  <link rel="stylesheet" href="./css/theme.css"><link rel="stylesheet" href="./css/style.css"><link rel="stylesheet" href="./css/orders.css"><link rel="stylesheet" href="./css/calculator.css">
+  <script>try{const t=localStorage.getItem('nl_camp_theme')||'light',l=localStorage.getItem('nl_camp_lang')||'bn';document.documentElement.setAttribute('data-theme',t);document.documentElement.lang=l;}catch(_){}</script>
 </head>
 <body>
   <div class="app-shell">
     <header class="app-header">
       <div class="brand">
-        <div class="logo-box" id="headerBrandLogo">
-          <img id="brandLogoImg" class="brand-logo-img" src="https://res.cloudinary.com/ayewcaxj/image/upload/v1793690710/NL_Add_Campaing_pkdeij.png" alt="Logo" />
-        </div>
+        <div class="logo-box" id="headerBrandLogo"><img id="brandLogoImg" class="brand-logo-img" src="https://res.cloudinary.com/ayewcaxj/image/upload/v1793690710/NL_Add_Campaing_pkdeij.png" alt="Logo" /></div>
         <div class="brand-text">
           <h1 data-i18n="brand_title">অ্যাড বুস্টিং ও অর্ডার ক্যালকুলেটর</h1>
           <p data-i18n="brand_sub">নকশা ল্যাব • বাজেট হিসাব করে সরাসরি বিজ্ঞাপন অর্ডার করুন</p>
@@ -24,7 +22,7 @@
         <div id="headerMenuDropdown" class="header-slide-actions hidden">
           <button type="button" id="themeToggleBtn" class="btn-ghost" title="Theme" data-i18n-title="t_theme"><span class="btn-ico" id="themeIco">☀️</span><span class="btn-lbl" id="themeLbl">লাইট</span></button>
           <button type="button" id="langToggleBtn" class="btn-ghost" title="Language" data-i18n-title="t_lang"><span class="btn-ico" id="langIco">🇬🇧</span><span class="btn-lbl" id="langLbl">English</span></button>
-          <button type="button" id="viewOrdersBtn" class="btn-ghost" title="Orders" data-i18n-title="t_orders"><span class="btn-ico">📋</span><span class="btn-lbl" data-i18n="btn_orders">আমার অর্ডারসমূহ</span></button>
+          <button type="button" id="viewOrdersBtn" class="btn-ghost" title="Orders" data-i18n-title="t_orders"><span class="btn-ico">📋</span><span class="btn-lbl" data-i18n="btn_orders">আমার অর্ডারসমূহ</span><span id="ordersCountBadge" class="orders-count-badge">০</span></button>
           <button type="button" id="aboutHelpBtn" class="btn-ghost" title="Helpline" data-i18n-title="t_help"><span class="btn-ico">👤</span><span class="btn-lbl" data-i18n="btn_about_short">হেল্পলাইন</span></button>
         </div>
         <button type="button" id="menuToggleBtn" class="btn-menu-trigger" aria-label="Menu" title="Menu" data-i18n-title="t_menu">
@@ -36,51 +34,40 @@
     <main class="main-content">
       <section class="card campaign-builder">
         <form id="campaignForm">
-          <div class="platform-grid" id="platformSelect">
-            <button type="button" class="plat-btn active" data-plat="Facebook"><svg class="plat-svg" viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07z"/></svg><span data-i18n="plat_fb">ফেসবুক</span></button>
-            <button type="button" class="plat-btn" data-plat="Instagram"><svg class="plat-svg" viewBox="0 0 24 24"><path fill="#E1306C" d="M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85 0 3.2-.01 3.58-.07 4.85-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.64.07-4.85.07-3.2 0-3.58-.01-4.85-.07-3.26-.15-4.77-1.7-4.92-4.92-.06-1.27-.07-1.64-.07-4.85 0-3.2.01-3.58.07-4.85C2.38 3.92 3.9 2.38 7.15 2.23c1.27-.06 1.65-.07 4.85-.07zM12 0C8.74 0 8.33.01 7.05.07 2.7.27.27 2.69.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.2 4.36 2.62 6.78 6.98 6.98 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c4.36-.2 6.78-2.62 6.98-6.98.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.2-4.36-2.62-6.78-6.98-6.98C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm6.4-11.85a1.44 1.44 0 1 0 1.44 1.44 1.44 1.44 0 0 0-1.44-1.44z"/></svg><span data-i18n="plat_ig">ইনস্টাগ্রাম</span></button>
-            <button type="button" class="plat-btn" data-plat="WhatsApp"><svg class="plat-svg" viewBox="0 0 24 24"><path fill="#25D366" d="M12.04 0C5.46 0 .1 5.35.1 11.94c0 2.1.55 4.16 1.6 5.97L0 24l6.25-1.64a11.9 11.9 0 0 0 5.79 1.48h.01c6.58 0 11.94-5.35 11.94-11.94A11.9 11.9 0 0 0 12.04 0zm6.99 16.92c-.29.83-1.71 1.59-2.4 1.69-.64.1-1.45.14-2.34-.15-.55-.17-1.25-.4-2.14-.79-3.77-1.63-6.23-5.43-6.42-5.68-.18-.25-1.53-2.04-1.53-3.89 0-1.85.97-2.76 1.31-3.14.35-.38.76-.47 1.01-.47.25 0 .5 0 .72.01.23.01.54-.09.85.65.31.76 1.07 2.61 1.16 2.8.1.19.16.41.03.66-.13.25-.19.41-.38.63-.19.22-.4.49-.57.66-.19.19-.39.39-.17.77.22.38.98 1.62 2.11 2.62 1.45 1.29 2.67 1.69 3.05 1.88.38.19.6.16.82-.1.22-.25.95-1.1 1.2-1.48.25-.38.5-.31.85-.19.35.13 2.21 1.04 2.59 1.23.38.19.63.28.72.44.1.16.1.91-.19 1.74z"/></svg><span data-i18n="plat_wa">হোয়াটসঅ্যাপ</span></button>
-            <button type="button" class="plat-btn" data-plat="YouTube"><svg class="plat-svg" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.56A3.02 3.02 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.12 2.14c1.88.56 9.38.56 9.38.56s7.5 0 9.38-.56a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg><span data-i18n="plat_yt">ইউটিউব</span></button>
-            <button type="button" class="plat-btn" data-plat="TikTok"><svg class="plat-svg" viewBox="0 0 24 24"><path fill="#00F2FE" d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/></svg><span data-i18n="plat_tt">টিকটক</span></button>
-            <button type="button" class="plat-btn" data-plat="Google Ads"><svg class="plat-svg" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.5 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.57-5.17 3.57-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg><span data-i18n="plat_google">গুগল</span></button>
-            <button type="button" class="plat-btn" data-plat="Bikroy"><svg class="plat-svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#009877"/><path fill="#FFC800" d="M7 6.5h6.2c2.1 0 3.6 1.1 3.6 2.8 0 1.1-.6 2-1.6 2.4 1.3.4 2.1 1.4 2.1 2.8 0 2-1.6 3.2-4 3.2H7V6.5zm3 4.3h2.6c.9 0 1.4-.5 1.4-1.2 0-.8-.5-1.2-1.4-1.2H10v2.4zm0 4.6h3c1 0 1.6-.5 1.6-1.4 0-.8-.6-1.3-1.6-1.3h-3v2.7z"/></svg><span data-i18n="plat_bikroy">বিক্রয়</span></button>
-          </div>
-
+          <div class="platform-grid" id="platformSelect"></div>
           <div class="curr-bar-wrap"><div class="currency-row" id="currencySelect"></div><button type="button" id="currDropBtn" class="curr-drop-btn" aria-label="All Currencies" title="All Currencies" data-i18n-title="t_all_curr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button><div id="currDropMenu" class="curr-drop-menu hidden"></div></div>
-
           <div class="slider-box">
-            <div class="slider-head">
-              <label for="budgetUSD" id="lblBudgetTitle">দৈনিক বাজেট (USD $)</label>
-              <div class="input-unit-wrap">
-                <span class="unit-prefix" id="budgetUnitPrefix">$</span>
-                <input type="text" inputmode="numeric" id="budgetUSD" class="input-ctrl input-num" value="১০" required>
-              </div>
-            </div>
+            <div class="slider-head"><div class="slider-title-wrap"><label for="budgetUSD" id="lblBudgetTitle">দৈনিক বাজেট (USD $)</label><span class="slider-help-text" data-i18n="help_budget">প্রতিদিন সর্বনিম্ন থেকে সর্বোচ্চ কত বাজেটে বিজ্ঞাপন চালাতে চান তা নির্ধারণ করুন</span></div><div class="input-unit-wrap"><span class="unit-prefix" id="budgetUnitPrefix">$</span><input type="text" inputmode="numeric" id="budgetUSD" class="input-ctrl input-num" value="১০" required></div></div>
+            <div id="budgetWarnMsg" class="slider-warn-msg" role="alert"></div>
             <input type="range" id="budgetSlider" class="range-slider" min="2" max="100" step="1" value="10">
             <div class="slider-ticks"><span id="minBudgetTick">$২</span><span id="maxBudgetTick">$১০০</span></div>
           </div>
-
           <div class="slider-box">
-            <div class="slider-head">
-              <label for="durationDays" data-i18n="lbl_duration">কত দিন চলবে (মেয়াদ)</label>
-              <div class="input-unit-wrap">
-                <input type="text" inputmode="numeric" id="durationDays" class="input-ctrl input-num" value="৪" required>
-                <span class="unit-suffix" data-i18n="lbl_days">দিন</span>
-              </div>
-            </div>
+            <div class="slider-head"><div class="slider-title-wrap"><label for="durationDays" data-i18n="lbl_duration">কত দিন চলবে (মেয়াদ)</label><span class="slider-help-text" data-i18n="help_duration">আপনার বিজ্ঞাপনটি একটানা মোট কত দিন চালাতে চান তা নির্ধারণ করুন</span></div><div class="input-unit-wrap"><input type="text" inputmode="numeric" id="durationDays" class="input-ctrl input-num" value="৪" required><span class="unit-suffix" data-i18n="lbl_days">দিন</span></div></div>
+            <div id="durationWarnMsg" class="slider-warn-msg" role="alert"></div>
             <input type="range" id="durationSlider" class="range-slider" min="4" max="100" step="1" value="4">
             <div class="slider-ticks"><span id="minDaysTick">৪ দিন</span><span id="maxDaysTick">১০০ দিন</span></div>
           </div>
-
-          <div class="calc-summary">
-            <div class="calc-Main" id="bdtEstimate">মোট বাজেট: ৪০ ডলার = ৫,০০০ টাকা</div>
-            <div class="calc-Sub" id="bdtRateHint">দৈনিক ১০ ডলার × ৪ দিন (১ ডলার = ১২৫ ৳)</div>
-          </div>
-
-          <button type="submit" id="submitBtn" class="btn-submit" data-i18n="btn_submit">🚀 ক্যাম্পেইন অর্ডার প্লেস করুন</button>
+          <div id="calcBreakdown" class="bill-card"></div>
+          <button type="submit" id="submitBtn" class="btn-submit" data-i18n="btn_submit">🚀 অ্যাড অর্ডার করুন</button>
         </form>
       </section>
     </main>
+
+    <div id="entryGateModal" class="gate-backdrop hidden" role="dialog" aria-modal="true">
+      <div class="gate-card">
+        <span class="gate-badge" data-i18n="gate_badge">স্বাগতম • নকশা ল্যাব</span>
+        <h2 class="gate-title" data-i18n="gate_title">প্রবেশ করতে আপনার নাম দিন</h2>
+        <p class="gate-sub" data-i18n="gate_sub">আপনার নাম দিয়ে পোর্টালে প্রবেশ করুন। ফোন নাম্বার দেওয়া ঐচ্ছিক (চাইলে দিতে পারেন, না চাইলে খালি রাখুন)।</p>
+        <form id="entryGateForm" novalidate style="display:flex;flex-direction:column;gap:12px;">
+          <div class="gate-field"><label for="gateNameInput" data-i18n="lbl_name">আপনার পূর্ণ নাম (বাধ্যতামূলক) *</label><input type="text" id="gateNameInput" class="input-ctrl" data-i18n-placeholder="ph_name" placeholder="আপনার পুরো নাম লিখুন..." autocomplete="name" required><span id="gateNameErr" class="gate-err" data-i18n="err_name_req">পোর্টালে প্রবেশ করতে অনুগ্রহ করে আপনার নাম লিখুন।</span></div>
+          <div class="gate-field"><label for="gatePhoneInput" data-i18n="lbl_phone">মোবাইল / হোয়াটসঅ্যাপ নাম্বার (ঐচ্ছিক)</label><input type="tel" id="gatePhoneInput" class="input-ctrl" data-i18n-placeholder="ph_phone" placeholder="০১XXXXXXXXX (ঐচ্ছিক)" autocomplete="tel"></div>
+          <button type="submit" class="btn-submit" data-i18n="btn_enter_portal">প্রবেশ করুন →</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="orderConfirmToast" class="order-confirm-float hidden" role="status" aria-live="polite"><span class="confirm-float-ico">✅</span><div><div id="confirmToastTitle" style="font-weight:800;font-size:0.86rem;"></div><div id="confirmToastSub" style="font-size:0.74rem;color:var(--text-muted);"></div></div></div>
 
     <div id="orderModal" class="modal-backdrop hidden">
       <div class="modal-card">
@@ -89,8 +76,6 @@
       </div>
     </div>
   </div>
-  <script src="./js/i18n.js"></script>
-  <script src="./js/currencies.js"></script>
-  <script src="./js/app.js"></script>
+  <script src="./js/i18n.js"></script><script src="./js/platforms.js"></script><script src="./js/currencies.js"></script><script src="./js/calc-ui.js"></script><script src="./js/order-anim.js"></script><script src="./js/orders.js"></script><script src="./js/app.js"></script>
 </body>
 </html>

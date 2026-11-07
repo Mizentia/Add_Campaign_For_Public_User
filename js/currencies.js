@@ -30,7 +30,7 @@ const RAW_CURR_CATALOG = [
 ];
 
 window.DEFAULT_CAMPAIGN_CURRENCIES = RAW_CURR_CATALOG.map(([code, sym, cc, nameBn, nameEn, rate, minBudget, maxBudget]) => ({
-  code, sym, flag: `https://flagcdn.com/w40/${cc}.png`, nameBn, nameEn, rate, minBudget, maxBudget,
+  code, sym, flag: `https://flagcdn.com/w40/${cc}.png`, nameBn, nameEn, rate, markupPercent: 0, minBudget, maxBudget,
   minDays: 4, maxDays: 100, unlimitedBudget: false, unlimitedDays: false, forStudio: true, forPublic: true, hasLimit: true, enabled: true
 }));
 const DEF_BY_CODE = Object.fromEntries(window.DEFAULT_CAMPAIGN_CURRENCIES.map(c => [c.code, c]));
@@ -39,7 +39,7 @@ window.getCurrencyFlagHtml = function (c) {
   const raw = String(c?.flag || DEF_BY_CODE[c?.code]?.flag || '').trim();
   const url = /^(https?:\/\/|\/|data:image\/)/i.test(raw) ? raw : (/^[a-zA-Z]{2}$/.test(raw) ? `https://flagcdn.com/w40/${raw.toLowerCase()}.png` : '');
   if (url) return `<img class="flag-svg" src="${url}" alt="${c.code || ''}" style="object-fit:cover;border-radius:2px;">`;
-  return raw ? `<span class="flag-svg" style="display:inline-flex;align-items:center;justify-content:center;font-size:0.8rem;">${raw}</span>` : '<span class="flag-svg">🏳️</span>';
+  return raw ? `<span class="flag-svg" style="display:inline-flex;align-items:center;justify-content:center;font-size:0.8rem;">${raw}</span>` : '';
 };
 
 function parseFsVal(v) {
@@ -68,18 +68,23 @@ window.syncPublicCampaignBrandLogo = async function () {
   } catch (_) {}
 };
 
-window.fetchStudioCampaignCurrencies = async function () {
+window.fetchStudioCampaignConfig = async function () {
   window.syncPublicCampaignBrandLogo();
   for (const url of ['./api/campaign-settings', 'http://localhost:3001/api/campaign-settings']) {
     try {
-      const r = await fetch(url).then(x => x.ok ? x.json() : null);
-      if (Array.isArray(r?.settings?.currencies) && r.settings.currencies.length) return r.settings.currencies;
+      const r = await fetch(url, { cache: 'no-store' }).then(x => x.ok ? x.json() : null);
+      if (r?.settings && (Array.isArray(r.settings.currencies) || Array.isArray(r.settings.platforms))) return r.settings;
     } catch (_) {}
   }
   try {
     const fsRes = await fetch('https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents/ecosystem/portalSettings').then(x => x.ok ? x.json() : null);
     const parsed = parseFsVal(fsRes?.fields?.value);
-    if (Array.isArray(parsed?.campaign?.currencies) && parsed.campaign.currencies.length > 12) return parsed.campaign.currencies;
+    if (parsed?.campaign) return parsed.campaign;
   } catch (_) {}
-  return window.DEFAULT_CAMPAIGN_CURRENCIES;
+  return { currencies: window.DEFAULT_CAMPAIGN_CURRENCIES, platforms: window.DEFAULT_CAMPAIGN_PLATFORMS };
+};
+
+window.fetchStudioCampaignCurrencies = async function () {
+  const cfg = await window.fetchStudioCampaignConfig();
+  return Array.isArray(cfg?.currencies) && cfg.currencies.length ? cfg.currencies : window.DEFAULT_CAMPAIGN_CURRENCIES;
 };
