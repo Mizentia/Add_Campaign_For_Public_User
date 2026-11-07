@@ -1,4 +1,16 @@
 const os = require('os');
+const fs = require('fs');
+const path = require('path');
+
+try {
+  const envPath = path.join(__dirname, '..', '.env');
+  if (fs.existsSync(envPath)) {
+    fs.readFileSync(envPath, 'utf8').split(/\r?\n/).forEach(line => {
+      const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+      if (m && process.env[m[1]] === undefined) process.env[m[1]] = m[2].replace(/^['"]|['"]$/g, '');
+    });
+  }
+} catch (_) {}
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -25,14 +37,20 @@ function getLocalIPv4() {
   return '127.0.0.1';
 }
 
-function parseJson(req) {
+function parseJson(req, maxBytes = 65536) {
   return new Promise((resolve) => {
-    let b = '';
-    req.on('data', c => { b += c; });
+    let b = '', tooLarge = false;
+    req.on('data', c => {
+      if (tooLarge) return;
+      b += c;
+      if (b.length > maxBytes) { tooLarge = true; b = ''; }
+    });
     req.on('end', () => {
+      if (tooLarge) return resolve({});
       try { resolve(JSON.parse(b || '{}')); }
       catch (_) { resolve({}); }
     });
+    req.on('error', () => resolve({}));
   });
 }
 

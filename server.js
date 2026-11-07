@@ -15,7 +15,9 @@ const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
 
-  const urlPath = decodeURI(req.url.split('?')[0]).replace(/\/+$/, '') || '/';
+  let urlPath = '/';
+  try { urlPath = decodeURI(String(req.url || '/').split('?')[0]).replace(/\/+$/, '') || '/'; }
+  catch (_) { res.writeHead(400, { 'Content-Type': 'text/plain' }); return res.end('400 Bad Request'); }
 
   if (urlPath === '/api/submit-order' && req.method === 'POST') return handleOrderSubmission(req, res);
   if (urlPath === '/api/order-status' && req.method === 'GET') return handleOrderStatus(req, res);
@@ -27,7 +29,7 @@ const server = http.createServer((req, res) => {
 
   let reqFile = urlPath === '/' ? '/index.html' : urlPath;
   const filePath = path.join(__dirname, reqFile);
-  const isPrivate = /^\/(data|scripts|node_modules|\.git)(\/|$)|^\/\.env|^\/server\.js$/i.test(reqFile);
+  const isPrivate = /^\/(data|scripts|node_modules|\.git)(\/|$)|^\/\.env|^\/(server\.js|package\.json|.*\.bat|.*\.md)$/i.test(reqFile);
   if (!filePath.startsWith(__dirname) || isPrivate) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
     return res.end('403 Forbidden');
