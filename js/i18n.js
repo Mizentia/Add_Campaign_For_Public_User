@@ -33,7 +33,7 @@ window.CAMPAIGN_I18N = {
     about_desc: 'যেকোনো বিজ্ঞাপন ক্যাম্পেইন, বুস্টিং পরামর্শ বা অর্ডারের সমস্যার জন্য সরাসরি আমাদের সাথে যোগাযোগ করুন:',
     about_helpline: '📞 হেল্পলাইন ও হোয়াটসঅ্যাপ:',
     about_fb: '📘 অফিসিয়াল ফেসবুক পেজ:',
-    about_email: '✉️ ইমেইল ও সাপোর্ট:',
+    about_email: '✉️ ইমেইল ও সাপোর্ট:', t_theme: 'থিম পরিবর্তন', t_lang: 'ভাষা পরিবর্তন', t_orders: 'আমার অর্ডারসমূহ', t_help: 'হেল্পলাইন ও আমাদের সম্পর্কে', t_menu: 'মেনু', t_all_curr: 'সকল কারেন্সি দেখুন', t_close: 'বন্ধ করুন',
     about_hours: '⏰ সেবা সময়: প্রতিদিন সকাল ৯টা – রাত ১১টা'
   },
   en: {
@@ -71,6 +71,7 @@ window.CAMPAIGN_I18N = {
     about_helpline: '📞 Helpline & WhatsApp:',
     about_fb: '📘 Official Facebook Page:',
     about_email: '✉️ Email & Support:',
-    about_hours: '⏰ Support Hours: Daily 9:00 AM – 11:00 PM'
+    about_hours: '⏰ Support Hours: Daily 9:00 AM – 11:00 PM',
+    t_theme: 'Change Theme', t_lang: 'Change Language', t_orders: 'My Orders', t_help: 'Helpline & About Us', t_menu: 'Menu', t_all_curr: 'View All Currencies', t_close: 'Close'
   }
 };

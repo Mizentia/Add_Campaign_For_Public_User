@@ -6,7 +6,7 @@
   <link id="appFavicon" rel="icon" type="image/png" href="https://res.cloudinary.com/ayewcaxj/image/upload/v1793690710/NL_Add_Campaing_pkdeij.png">
   <link id="appAppleIcon" rel="apple-touch-icon" href="https://res.cloudinary.com/ayewcaxj/image/upload/v1793690710/NL_Add_Campaing_pkdeij.png">
   <link rel="stylesheet" href="./css/theme.css">
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/style.css"><script>try{const t=localStorage.getItem('nl_camp_theme'),l=localStorage.getItem('nl_camp_lang');if(t)document.documentElement.setAttribute('data-theme',t);if(l)document.documentElement.lang=l;}catch(_){}</script>
 </head>
 <body>
   <div class="app-shell">
@@ -22,12 +22,12 @@
       </div>
       <div class="menu-wrap">
         <div id="headerMenuDropdown" class="header-slide-actions hidden">
-          <button type="button" id="themeToggleBtn" class="btn-ghost" title="Theme"><span class="btn-ico" id="themeIco">☀️</span><span class="btn-lbl" id="themeLbl">লাইট</span></button>
-          <button type="button" id="langToggleBtn" class="btn-ghost" title="Language"><span class="btn-ico" id="langIco">🇬🇧</span><span class="btn-lbl" id="langLbl">English</span></button>
-          <button type="button" id="viewOrdersBtn" class="btn-ghost" title="Orders"><span class="btn-ico">📋</span><span class="btn-lbl" data-i18n="btn_orders">আমার অর্ডারসমূহ</span></button>
-          <button type="button" id="aboutHelpBtn" class="btn-ghost" title="Helpline & About"><span class="btn-ico">👤</span><span class="btn-lbl" data-i18n="btn_about_short">হেল্পলাইন</span></button>
+          <button type="button" id="themeToggleBtn" class="btn-ghost" title="Theme" data-i18n-title="t_theme"><span class="btn-ico" id="themeIco">☀️</span><span class="btn-lbl" id="themeLbl">লাইট</span></button>
+          <button type="button" id="langToggleBtn" class="btn-ghost" title="Language" data-i18n-title="t_lang"><span class="btn-ico" id="langIco">🇬🇧</span><span class="btn-lbl" id="langLbl">English</span></button>
+          <button type="button" id="viewOrdersBtn" class="btn-ghost" title="Orders" data-i18n-title="t_orders"><span class="btn-ico">📋</span><span class="btn-lbl" data-i18n="btn_orders">আমার অর্ডারসমূহ</span></button>
+          <button type="button" id="aboutHelpBtn" class="btn-ghost" title="Helpline" data-i18n-title="t_help"><span class="btn-ico">👤</span><span class="btn-lbl" data-i18n="btn_about_short">হেল্পলাইন</span></button>
         </div>
-        <button type="button" id="menuToggleBtn" class="btn-menu-trigger" aria-label="Menu" title="Menu">
+        <button type="button" id="menuToggleBtn" class="btn-menu-trigger" aria-label="Menu" title="Menu" data-i18n-title="t_menu">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="6" x2="15" y2="6"/><line x1="4" y1="12" x2="15" y2="12"/><line x1="4" y1="18" x2="15" y2="18"/><circle cx="19.5" cy="6" r="1.2" fill="currentColor"/><circle cx="19.5" cy="12" r="1.2" fill="currentColor"/><circle cx="19.5" cy="18" r="1.2" fill="currentColor"/></svg>
         </button>
       </div>
@@ -46,7 +46,7 @@
             <button type="button" class="plat-btn" data-plat="Bikroy"><svg class="plat-svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#009877"/><path fill="#FFC800" d="M7 6.5h6.2c2.1 0 3.6 1.1 3.6 2.8 0 1.1-.6 2-1.6 2.4 1.3.4 2.1 1.4 2.1 2.8 0 2-1.6 3.2-4 3.2H7V6.5zm3 4.3h2.6c.9 0 1.4-.5 1.4-1.2 0-.8-.5-1.2-1.4-1.2H10v2.4zm0 4.6h3c1 0 1.6-.5 1.6-1.4 0-.8-.6-1.3-1.6-1.3h-3v2.7z"/></svg><span data-i18n="plat_bikroy">বিক্রয়</span></button>
           </div>
 
-          <div class="currency-row" id="currencySelect"></div>
+          <div class="curr-bar-wrap"><div class="currency-row" id="currencySelect"></div><button type="button" id="currDropBtn" class="curr-drop-btn" aria-label="All Currencies" title="All Currencies" data-i18n-title="t_all_curr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button><div id="currDropMenu" class="curr-drop-menu hidden"></div></div>
 
           <div class="slider-box">
             <div class="slider-head">
@@ -84,7 +84,7 @@
 
     <div id="orderModal" class="modal-backdrop hidden">
       <div class="modal-card">
-        <div class="modal-header"><h3 id="modalTitle">আমার অর্ডারসমূহ</h3><button id="closeModalBtn" class="btn-close">&times;</button></div>
+        <div class="modal-header"><h3 id="modalTitle">আমার অর্ডারসমূহ</h3><button id="closeModalBtn" type="button" class="btn-close" data-i18n-title="t_close">&times;</button></div>
         <div id="modalBody" class="modal-body"></div>
       </div>
     </div>
