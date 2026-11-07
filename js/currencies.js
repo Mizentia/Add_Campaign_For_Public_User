@@ -45,41 +45,32 @@ window.getCurrencyFlagHtml = function (c) {
 function parseFsVal(v) {
   if (!v) return null;
   if ('stringValue' in v) return v.stringValue;
-  if ('integerValue' in v) return Number(v.integerValue);
-  if ('doubleValue' in v) return Number(v.doubleValue);
+  if ('integerValue' in v || 'doubleValue' in v) return Number(v.integerValue ?? v.doubleValue);
   if ('booleanValue' in v) return Boolean(v.booleanValue);
   if ('arrayValue' in v) return (v.arrayValue.values || []).map(parseFsVal);
-  if ('mapValue' in v) {
-    const out = {};
-    for (const [k, val] of Object.entries(v.mapValue.fields || {})) out[k] = parseFsVal(val);
-    return out;
-  }
+  if ('mapValue' in v) return Object.fromEntries(Object.entries(v.mapValue.fields || {}).map(([k, val]) => [k, parseFsVal(val)]));
   return null;
 }
+const toFsVal = (v) => typeof v === 'boolean' ? { booleanValue: v } : (typeof v === 'number' && Number.isFinite(v) ? (Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v }) : { stringValue: String(v ?? '') });
+const FS_BASE = 'https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents';
+const STUDIO_BASES = ['https://nl-admin-studio.vercel.app', 'http://localhost:3001'];
 
 window.syncPublicCampaignBrandLogo = async function () {
   try {
-    const fsRes = await fetch('https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents/ecosystem/projects').then(x => x.ok ? x.json() : null);
-    const list = parseFsVal(fsRes?.fields?.value) || [];
-    const proj = list.find(p => p && (p.id === 'add-campaign-for-public-user' || p.id === 'proj-campaign-public' || p.dirName === 'Add_Campaign_For_Public_User' || Number(p.port) === 8088));
-    if (proj?.logo) {
-      ['brandLogoImg', 'appFavicon', 'appAppleIcon'].forEach((id, i) => { const el = document.getElementById(id); if (el) el[i === 0 ? 'src' : 'href'] = proj.logo; });
-    }
+    const fsRes = await fetch(`${FS_BASE}/ecosystem/projects`).then(x => x.ok ? x.json() : null);
+    const proj = (parseFsVal(fsRes?.fields?.value) || []).find(p => p && (p.id === 'add-campaign-for-public-user' || p.id === 'proj-campaign-public' || p.dirName === 'Add_Campaign_For_Public_User' || Number(p.port) === 8088));
+    if (proj?.logo) ['brandLogoImg', 'appFavicon', 'appAppleIcon'].forEach((id, i) => { const el = document.getElementById(id); if (el) el[i === 0 ? 'src' : 'href'] = proj.logo; });
   } catch (_) {}
 };
 
 window.fetchStudioCampaignConfig = async function () {
   window.syncPublicCampaignBrandLogo();
-  for (const url of ['./api/campaign-settings', 'http://localhost:3001/api/campaign-settings']) {
-    try {
-      const r = await fetch(url, { cache: 'no-store' }).then(x => x.ok ? x.json() : null);
-      if (r?.settings && (Array.isArray(r.settings.currencies) || Array.isArray(r.settings.platforms))) return r.settings;
-    } catch (_) {}
+  for (const url of ['./api/campaign-settings', ...STUDIO_BASES.map(b => `${b}/api/campaign-settings`)]) {
+    try { const r = await fetch(url, { cache: 'no-store' }).then(x => x.ok ? x.json() : null); if (r?.settings && (Array.isArray(r.settings.currencies) || Array.isArray(r.settings.platforms))) return r.settings; } catch (_) {}
   }
   try {
-    const fsRes = await fetch('https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents/ecosystem/portalSettings').then(x => x.ok ? x.json() : null);
-    const parsed = parseFsVal(fsRes?.fields?.value);
-    if (parsed?.campaign) return parsed.campaign;
+    const fsRes = await fetch(`${FS_BASE}/ecosystem/portalSettings`).then(x => x.ok ? x.json() : null);
+    const parsed = parseFsVal(fsRes?.fields?.value); if (parsed?.campaign) return parsed.campaign;
   } catch (_) {}
   return { currencies: window.DEFAULT_CAMPAIGN_CURRENCIES, platforms: window.DEFAULT_CAMPAIGN_PLATFORMS };
 };
@@ -87,4 +78,21 @@ window.fetchStudioCampaignConfig = async function () {
 window.fetchStudioCampaignCurrencies = async function () {
   const cfg = await window.fetchStudioCampaignConfig();
   return Array.isArray(cfg?.currencies) && cfg.currencies.length ? cfg.currencies : window.DEFAULT_CAMPAIGN_CURRENCIES;
+};
+
+window.cloudSubmitOrder = async function (order) {
+  for (const b of STUDIO_BASES) { try { const r = await fetch(`${b}/api/campaign-orders`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Source': 'public-portal' }, body: JSON.stringify(order) }); if (r.ok) return true; } catch (_) {} }
+  try {
+    const fields = Object.fromEntries(Object.entries(order).map(([k, v]) => [k, toFsVal(v)]));
+    await fetch(`${FS_BASE}/campaign_orders/${encodeURIComponent(order.id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) });
+  } catch (_) {}
+};
+
+window.cloudFetchStatuses = async function (idsCsv) {
+  for (const b of STUDIO_BASES) { try { const d = await fetch(`${b}/api/campaign-orders/status?ids=${encodeURIComponent(idsCsv)}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null); if (d?.success) return d; } catch (_) {} }
+  const statuses = {}, ids = String(idsCsv || '').split(',').filter(Boolean).slice(0, 20);
+  await Promise.all(ids.map(async id => {
+    try { const r = await fetch(`${FS_BASE}/campaign_orders/${encodeURIComponent(id)}`, { cache: 'no-store' }); if (r.ok) { const d = parseFsVal({ mapValue: await r.json() }); if (d) statuses[id] = { found: true, status: d.status || 'pending', publicNote: d.publicNote || '', updatedAt: d.updatedAt }; } } catch (_) {}
+  }));
+  return { success: Object.keys(statuses).length > 0, statuses };
 };

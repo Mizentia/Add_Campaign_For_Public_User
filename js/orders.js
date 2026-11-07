@@ -33,7 +33,7 @@
     if (!list.length) return list;
     const ids = list.map(o => o.id).filter(Boolean).slice(0, 60).join(',');
     let data = await fetch(`./api/order-status?ids=${encodeURIComponent(ids)}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null);
-    if (!data?.success) data = await fetch(`http://localhost:3001/api/campaign-orders/status?ids=${encodeURIComponent(ids)}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null);
+    if (!data?.success) data = await window.cloudFetchStatuses?.(ids);
     if (!data?.success || !data.statuses) return list;
     let changed = false;
     const updated = list.map(o => {
@@ -84,7 +84,7 @@
     const res = await fetch('./api/submit-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(async r => ({ status: r.status, body: await r.json().catch(() => ({})) })).catch(() => null);
     submitting = false;
     if (res?.status === 429) { window.OrderAnim?.markCooldownStart(res.body?.cooldownRemaining || 60); return; }
-    if (!res || res.status >= 400) await fetch('http://localhost:3001/api/campaign-orders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Source': 'public-portal' }, body: JSON.stringify(payload) }).catch(() => null);
+    if (!res?.body?.success) await window.cloudSubmitOrder?.(payload);
     const localList = getOrders(), prevCount = localList.length;
     localList.unshift(payload); saveOrders(localList, true);
     window.OrderAnim?.markCooldownStart(60); window.OrderAnim?.playOrderSuccessSequence(id, prevCount, localList.length); syncOrderStatuses();
