@@ -1,37 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&family=Noto+Sans+Bengali:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
-[data-theme="dark"] {
-  --font-main: 'Plus Jakarta Sans', 'Hind Siliguri', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
-  --bg-primary: #070b14;
-  --bg-gradient: radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.25), transparent 44%), radial-gradient(circle at 88% 85%, rgba(16, 185, 129, 0.18), transparent 46%), radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.16), transparent 52%);
-  --bg-card: rgba(15, 23, 42, 0.84);
-  --bg-input: rgba(9, 14, 26, 0.88);
-  --bg-pill: rgba(255, 255, 255, 0.06);
-  --bg-pill-hover: rgba(99, 102, 241, 0.16);
-  --bg-box-active: rgba(99, 102, 241, 0.1);
-  --bg-modal: #111a2e;
-  --border: rgba(255, 255, 255, 0.13);
-  --border-focus: rgba(129, 140, 248, 0.78);
-  --accent: #6366f1;
-  --accent-2: #8b5cf6;
-  --accent-hover: #4f46e5;
-  --btn-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 52%, #ec4899 100%);
-  --active-gradient: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
-  --text-main: #f8fafc;
-  --text-heading: #ffffff;
-  --text-muted: #94a3b8;
-  --hint-color: #38bdf8;
-  --success: #10b981;
-  --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6; --muted-status: #94a3b8;
-  --shadow-card: 0 22px 48px -10px rgba(0, 0, 0, 0.68), 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --shadow-btn: 0 10px 26px -3px rgba(99, 102, 241, 0.58), 0 0 16px rgba(139, 92, 246, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  --shadow-focus: 0 0 0 3.5px rgba(99, 102, 241, 0.28), 0 12px 30px -4px rgba(99, 102, 241, 0.36);
-  --shadow-logo: 0 6px 20px rgba(99, 102, 241, 0.48);
-  --logo-bg: #0f172a;
-  --logo-border: rgba(129, 140, 248, 0.68);
-}
-
-:root, [data-theme="light"] {
+:root, html[data-theme="light"], body[data-theme="light"] {
+  color-scheme: light;
   --font-main: 'Plus Jakarta Sans', 'Hind Siliguri', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
   --bg-primary: #eef2ff;
   --bg-gradient: radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.18), transparent 44%), radial-gradient(circle at 88% 85%, rgba(16, 185, 129, 0.14), transparent 46%), radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.12), transparent 52%);
@@ -60,6 +30,38 @@
   --shadow-logo: 0 6px 16px rgba(79, 70, 229, 0.3);
   --logo-bg: #ffffff;
   --logo-border: rgba(79, 70, 229, 0.52);
+}
+
+html[data-theme="dark"], body[data-theme="dark"] {
+  color-scheme: dark;
+  --font-main: 'Plus Jakarta Sans', 'Hind Siliguri', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
+  --bg-primary: #060a14;
+  --bg-gradient: radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.26), transparent 44%), radial-gradient(circle at 88% 85%, rgba(16, 185, 129, 0.18), transparent 46%), radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.18), transparent 52%);
+  --bg-card: rgba(15, 23, 42, 0.86);
+  --bg-input: rgba(8, 13, 25, 0.92);
+  --bg-pill: rgba(30, 41, 59, 0.72);
+  --bg-pill-hover: rgba(99, 102, 241, 0.2);
+  --bg-box-active: rgba(99, 102, 241, 0.12);
+  --bg-modal: #111a2e;
+  --border: rgba(148, 163, 184, 0.18);
+  --border-focus: rgba(129, 140, 248, 0.82);
+  --accent: #818cf8;
+  --accent-2: #a78bfa;
+  --accent-hover: #6366f1;
+  --btn-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 52%, #ec4899 100%);
+  --active-gradient: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  --text-main: #f1f5f9;
+  --text-heading: #ffffff;
+  --text-muted: #94a3b8;
+  --hint-color: #38bdf8;
+  --success: #10b981;
+  --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6; --muted-status: #94a3b8;
+  --shadow-card: 0 22px 48px -10px rgba(0, 0, 0, 0.72), 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  --shadow-btn: 0 10px 26px -3px rgba(99, 102, 241, 0.58), 0 0 16px rgba(139, 92, 246, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  --shadow-focus: 0 0 0 3.5px rgba(99, 102, 241, 0.3), 0 12px 30px -4px rgba(99, 102, 241, 0.38);
+  --shadow-logo: 0 6px 20px rgba(99, 102, 241, 0.48);
+  --logo-bg: #0f172a;
+  --logo-border: rgba(129, 140, 248, 0.68);
 }
 
 @keyframes popIn {
