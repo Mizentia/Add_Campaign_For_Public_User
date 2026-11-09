@@ -41,7 +41,10 @@
 
   function bindValidatedInput(inp, slider, warnEl, getMeta, onValidChange) {
     if (!inp || !slider) return;
-    const wrap = inp.closest('.input-unit-wrap');
+    const wrap = inp.closest('.input-unit-wrap'), unlockInp = () => { inp.readOnly = false; }, lockBlurInp = () => { inp.readOnly = true; if (document.activeElement === inp) inp.blur(); };
+    inp.readOnly = true;
+    ['pointerdown', 'touchstart', 'mousedown'].forEach(ev => inp.addEventListener(ev, unlockInp, { passive: true }));
+    ['pointerdown', 'touchstart', 'input'].forEach(ev => slider.addEventListener(ev, lockBlurInp, { passive: true }));
     const resetToMin = (reasonKey) => {
       const { min, sym, unit, tr, toLocNum } = getMeta();
       const dispMin = sym ? `${sym} ${toLocNum(min)}` : `${toLocNum(min)} ${unit || ''}`.trim();
@@ -61,7 +64,7 @@
       animateSlider(slider, Math.min(max, num)); onValidChange();
     });
     inp.addEventListener('blur', () => {
-      clearTimeout(typeTimers.get(inp)); wrap?.classList.remove('is-pending-val');
+      inp.readOnly = true; clearTimeout(typeTimers.get(inp)); wrap?.classList.remove('is-pending-val');
       const { min, max, hasLim, allowDec, toEnNum, toLocNum } = getMeta();
       const raw = sanitizeRaw(inp.value, allowDec, toEnNum), num = Number(raw);
       if (raw === '' || !Number.isFinite(num) || num < min) return resetToMin('warn_below_min');

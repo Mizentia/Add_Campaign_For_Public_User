@@ -35,7 +35,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   menuToggleBtn?.addEventListener('click', (e) => { e.stopPropagation(); menuDropdown?.classList.toggle('hidden'); closeCurrDrop(); });
   currDropBtn?.addEventListener('click', (e) => { e.stopPropagation(); syncDropdown(); const isHid = currDropMenu?.classList.toggle('hidden'); currDropBtn.classList.toggle('open', !isHid); menuDropdown?.classList.add('hidden'); });
   currRow?.addEventListener('scroll', syncDropdown, { passive: true }); window.addEventListener('resize', syncDropdown);
+  const blurOutsideInputs = (t) => { [budgetInput, durationInput].forEach(el => { if (el && t !== el) { el.readOnly = true; if (document.activeElement === el) el.blur(); } }); };
+  document.addEventListener('touchstart', (e) => blurOutsideInputs(e.target), { capture: true, passive: true });
   document.addEventListener('pointerdown', (e) => {
+    blurOutsideInputs(e.target);
     if (menuDropdown && !menuDropdown.classList.contains('hidden') && !menuDropdown.contains(e.target) && !menuToggleBtn?.contains(e.target)) { menuDropdown.classList.add('hidden'); menuDismissed = true; e.preventDefault(); e.stopPropagation(); return; }
     if (currDropMenu && !currDropMenu.classList.contains('hidden') && !currDropMenu.contains(e.target) && !currDropBtn?.contains(e.target)) closeCurrDrop();
     if (!e.target.closest?.('.slider-box')) document.querySelectorAll('.slider-box').forEach(b => b.classList.remove('active-box'));
@@ -74,8 +77,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('budgetUnitPrefix').textContent = sym; document.getElementById('lblBudgetTitle').textContent = `${tr('lbl_budget_prefix')} (${code} ${sym})`;
     window.CalcUI?.renderCalcUI({ activeCurr, activePlat, totals, tr, toLocNum, getPlatName, isBn: currentLang === 'bn' });
   };
-  budgetSlider?.addEventListener('input', () => { budgetWarn?.classList.remove('show'); const v = Math.round(Number(budgetSlider.value)); budgetInput.value = toLocNum(v); window.CalcUI?.setSliderPct(budgetSlider, v); updateCalc(); });
-  durationSlider?.addEventListener('input', () => { durationWarn?.classList.remove('show'); const v = Math.round(Number(durationSlider.value)); durationInput.value = toLocNum(v); window.CalcUI?.setSliderPct(durationSlider, v); updateCalc(); });
+  budgetSlider?.addEventListener('input', () => { blurOutsideInputs(budgetSlider); budgetWarn?.classList.remove('show'); const v = Math.round(Number(budgetSlider.value)); budgetInput.value = toLocNum(v); window.CalcUI?.setSliderPct(budgetSlider, v); updateCalc(); });
+  durationSlider?.addEventListener('input', () => { blurOutsideInputs(durationSlider); durationWarn?.classList.remove('show'); const v = Math.round(Number(durationSlider.value)); durationInput.value = toLocNum(v); window.CalcUI?.setSliderPct(durationSlider, v); updateCalc(); });
   window.CalcUI?.bindValidatedInput(budgetInput, budgetSlider, budgetWarn, () => ({ min: activeCurr.minBudget, max: activeCurr.maxBudget, hasLim: hasBdtLim(activeCurr), allowDec: true, sym: activeCurr.sym, tr, toLocNum, toEnNum }), updateCalc);
   window.CalcUI?.bindValidatedInput(durationInput, durationSlider, durationWarn, () => ({ min: activeCurr.minDays, max: activeCurr.maxDays, hasLim: hasDayLim(activeCurr), allowDec: false, unit: tr('lbl_days'), tr, toLocNum, toEnNum }), updateCalc);
   const applyTheme = (theme) => { currentTheme = theme; savePref('nl_camp_theme', theme); document.documentElement.setAttribute('data-theme', theme); document.getElementById('themeIco').textContent = theme === 'dark' ? '☀️' : '🌙'; document.getElementById('themeLbl').textContent = theme === 'dark' ? tr('theme_light') : tr('theme_dark'); };

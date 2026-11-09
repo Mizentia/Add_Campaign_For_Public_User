@@ -47,7 +47,7 @@ body { background-color: var(--bg-primary); background-image: var(--bg-gradient)
 .slider-head label { font-size: 0.92rem; font-weight: 700; color: var(--text-heading); transition: color 0.2s ease; }
 .slider-box:focus-within .slider-head label, .slider-box.active-box .slider-head label { color: var(--accent); }
 .input-unit-wrap { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-input); border: 1.5px solid var(--border); border-radius: 10px; padding: 4px 11px; transition: all 0.25s ease; }
-.input-unit-wrap:focus-within { border-color: var(--accent); box-shadow: var(--shadow-focus); transform: scale(1.03); }
+.input-unit-wrap:has(.input-num:not([readonly]):focus) { border-color: var(--accent); box-shadow: var(--shadow-focus); transform: scale(1.03); }
 .unit-prefix, .unit-suffix { font-size: 0.88rem; font-weight: 800; color: var(--accent); }
 .input-ctrl { width: 100%; background: var(--bg-input); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; color: var(--text-main); font-size: 0.92rem; font-weight: 600; outline: none; transition: all 0.22s ease; }
 .input-ctrl:focus { border-color: var(--accent); box-shadow: var(--shadow-focus); }
