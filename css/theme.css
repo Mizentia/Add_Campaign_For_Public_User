@@ -1,21 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&family=Noto+Sans+Bengali:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 [data-theme="dark"] {
-  --font-main: 'Plus Jakarta Sans', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
-  --bg-primary: #090e1a;
-  --bg-gradient: radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.22), transparent 42%), radial-gradient(circle at 88% 85%, rgba(16, 185, 129, 0.16), transparent 45%), radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.14), transparent 50%);
-  --bg-card: rgba(17, 25, 40, 0.82);
-  --bg-input: rgba(11, 17, 30, 0.85);
-  --bg-pill: rgba(255, 255, 255, 0.055);
-  --bg-pill-hover: rgba(99, 102, 241, 0.14);
-  --bg-box-active: rgba(99, 102, 241, 0.09);
-  --bg-modal: #131c2e;
-  --border: rgba(255, 255, 255, 0.12);
-  --border-focus: rgba(129, 140, 248, 0.75);
+  --font-main: 'Plus Jakarta Sans', 'Hind Siliguri', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
+  --bg-primary: #070b14;
+  --bg-gradient: radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.25), transparent 44%), radial-gradient(circle at 88% 85%, rgba(16, 185, 129, 0.18), transparent 46%), radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.16), transparent 52%);
+  --bg-card: rgba(15, 23, 42, 0.84);
+  --bg-input: rgba(9, 14, 26, 0.88);
+  --bg-pill: rgba(255, 255, 255, 0.06);
+  --bg-pill-hover: rgba(99, 102, 241, 0.16);
+  --bg-box-active: rgba(99, 102, 241, 0.1);
+  --bg-modal: #111a2e;
+  --border: rgba(255, 255, 255, 0.13);
+  --border-focus: rgba(129, 140, 248, 0.78);
   --accent: #6366f1;
   --accent-2: #8b5cf6;
   --accent-hover: #4f46e5;
-  --btn-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #ec4899 100%);
+  --btn-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 52%, #ec4899 100%);
   --active-gradient: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
   --text-main: #f8fafc;
   --text-heading: #ffffff;
@@ -23,30 +23,30 @@
   --hint-color: #38bdf8;
   --success: #10b981;
   --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6; --muted-status: #94a3b8;
-  --shadow-card: 0 18px 42px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
-  --shadow-btn: 0 8px 24px -2px rgba(99, 102, 241, 0.55), 0 0 14px rgba(139, 92, 246, 0.35);
-  --shadow-focus: 0 0 0 3.5px rgba(99, 102, 241, 0.25), 0 10px 28px -4px rgba(99, 102, 241, 0.32);
-  --shadow-logo: 0 6px 18px rgba(99, 102, 241, 0.45);
+  --shadow-card: 0 22px 48px -10px rgba(0, 0, 0, 0.68), 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-btn: 0 10px 26px -3px rgba(99, 102, 241, 0.58), 0 0 16px rgba(139, 92, 246, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  --shadow-focus: 0 0 0 3.5px rgba(99, 102, 241, 0.28), 0 12px 30px -4px rgba(99, 102, 241, 0.36);
+  --shadow-logo: 0 6px 20px rgba(99, 102, 241, 0.48);
   --logo-bg: #0f172a;
-  --logo-border: rgba(129, 140, 248, 0.65);
+  --logo-border: rgba(129, 140, 248, 0.68);
 }
 
 :root, [data-theme="light"] {
-  --font-main: 'Plus Jakarta Sans', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
+  --font-main: 'Plus Jakarta Sans', 'Hind Siliguri', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
   --bg-primary: #eef2ff;
-  --bg-gradient: radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.16), transparent 42%), radial-gradient(circle at 88% 85%, rgba(16, 185, 129, 0.12), transparent 45%), radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.1), transparent 50%);
-  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-gradient: radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.18), transparent 44%), radial-gradient(circle at 88% 85%, rgba(16, 185, 129, 0.14), transparent 46%), radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.12), transparent 52%);
+  --bg-card: rgba(255, 255, 255, 0.94);
   --bg-input: #ffffff;
   --bg-pill: #f1f5f9;
   --bg-pill-hover: #e0e7ff;
-  --bg-box-active: rgba(79, 70, 229, 0.06);
+  --bg-box-active: rgba(79, 70, 229, 0.065);
   --bg-modal: #ffffff;
   --border: #cbd5e1;
   --border-focus: #6366f1;
   --accent: #4f46e5;
   --accent-2: #7c3aed;
   --accent-hover: #4338ca;
-  --btn-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #db2777 100%);
+  --btn-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 52%, #db2777 100%);
   --active-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   --text-main: #0f172a;
   --text-heading: #090e1a;
@@ -54,12 +54,12 @@
   --hint-color: #0284c7;
   --success: #059669;
   --warning: #d97706; --danger: #dc2626; --info: #2563eb; --muted-status: #64748b;
-  --shadow-card: 0 16px 38px -8px rgba(79, 70, 229, 0.14), 0 4px 12px rgba(15, 23, 42, 0.05);
-  --shadow-btn: 0 8px 22px -2px rgba(79, 70, 229, 0.42), 0 0 12px rgba(124, 58, 237, 0.22);
-  --shadow-focus: 0 0 0 3.5px rgba(79, 70, 229, 0.2), 0 10px 26px -4px rgba(79, 70, 229, 0.2);
-  --shadow-logo: 0 5px 15px rgba(79, 70, 229, 0.28);
+  --shadow-card: 0 20px 44px -10px rgba(79, 70, 229, 0.16), 0 6px 16px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --shadow-btn: 0 10px 24px -3px rgba(79, 70, 229, 0.45), 0 0 14px rgba(124, 58, 237, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  --shadow-focus: 0 0 0 3.5px rgba(79, 70, 229, 0.22), 0 12px 28px -4px rgba(79, 70, 229, 0.22);
+  --shadow-logo: 0 6px 16px rgba(79, 70, 229, 0.3);
   --logo-bg: #ffffff;
-  --logo-border: rgba(79, 70, 229, 0.5);
+  --logo-border: rgba(79, 70, 229, 0.52);
 }
 
 @keyframes popIn {
@@ -67,10 +67,10 @@
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes cardFadeUp {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% { opacity: 0; transform: translateY(12px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes pulseHalo {
   0%, 100% { box-shadow: var(--shadow-btn); }
-  50% { box-shadow: 0 10px 28px rgba(99, 102, 241, 0.65), 0 0 18px rgba(236, 72, 153, 0.35); }
+  50% { box-shadow: 0 12px 30px rgba(99, 102, 241, 0.68), 0 0 20px rgba(236, 72, 153, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
 }

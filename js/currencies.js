@@ -1,6 +1,6 @@
 const RAW_CURR_CATALOG = [
   ['AED','د.إ','ae','সংযুক্ত আরব আমিরাতের দিরহাম','UAE Dirham',34,10,500],['ARS','AR$','ar','আর্জেন্টাইন পেসো','Argentine Peso',0.13,2000,100000],
-  ['AUD','A$','au','অস্ট্রেলিয়ান ডলার','Australian Dollar',82,2,100],['BDT','৳','bd','বাংলাদেশী টাকা','Bangladeshi Taka',1,250,12500],
+  ['AUD','A$','au','অস্ট্রেলিয়ান ডলার','Australian Dollar',82,2,100],['BDT','৳','bd','বাংলাদেশী টাকা','Bangladeshi Taka',1,125,12500],
   ['BOB','Bs.','bo','বলিভিয়ান বলিভিয়ানো','Bolivian Boliviano',18,15,700],['BRL','R$','br','ব্রাজিলিয়ান রিয়েল','Brazilian Real',22,10,500],
   ['CAD','C$','ca','কানাডিয়ান ডলার','Canadian Dollar',92,2,100],['CHF','CHF','ch','সুইশ ফ্রাঙ্ক','Swiss Franc',140,2,100],
   ['CLP','CLP$','cl','চিলিয়ান পেসো','Chilean Peso',0.13,2000,100000],['CNY','¥','cn','চীনা ইউয়ান','Chinese Yuan',17.5,15,700],

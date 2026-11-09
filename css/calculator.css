@@ -1,34 +1,36 @@
-.slider-box { padding: 9px 12px; margin-bottom: 8px; gap: 5px; border-radius: 12px; position: relative; }
+.slider-box { padding: 10px 13px; margin-bottom: 9px; gap: 6px; border-radius: 13px; position: relative; }
 .slider-head { gap: 8px; align-items: flex-start; }
 .slider-title-wrap { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.slider-head label { font-size: 0.88rem; line-height: 1.22; }
-.slider-help-text { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; line-height: 1.3; }
-.input-unit-wrap { padding: 3px 8px; gap: 5px; border-radius: 9px; flex-shrink: 0; }
-.unit-prefix, .unit-suffix { display: inline-flex; align-items: center; justify-content: center; padding: 2px 6px; border-radius: 6px; background: color-mix(in srgb, var(--accent) 16%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent); color: var(--accent); font-size: 0.78rem; font-weight: 800; line-height: 1.15; letter-spacing: 0.02em; }
-.input-num { width: 66px; font-size: 1rem; padding: 2px; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.slider-head label { font-size: 0.9rem; line-height: 1.32; }
+.slider-help-text { font-size: 0.73rem; color: var(--text-muted); font-weight: 500; line-height: 1.36; }
+.input-unit-wrap { padding: 3px 9px; gap: 5px; border-radius: 10px; flex-shrink: 0; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06); }
+.input-unit-wrap.is-pending-val { border-color: var(--warning) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--warning) 20%, transparent); }
+.unit-prefix, .unit-suffix { display: inline-flex; align-items: center; justify-content: center; padding: 2px 6px; border-radius: 6px; background: color-mix(in srgb, var(--accent) 16%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent); color: var(--accent); font-size: 0.78rem; font-weight: 800; line-height: 1.2; letter-spacing: 0.02em; }
+.input-num { width: 82px; font-size: 1rem; padding: 2px; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
 .range-slider { height: 7px; margin: 2px 0; }
 .range-slider::-webkit-slider-thumb { width: 19px; height: 19px; }
 .slider-ticks { display: flex; justify-content: space-between; align-items: center; margin-top: 1px; }
-.tick-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 7px; border-radius: 7px; background: var(--bg-input); border: 1px solid var(--border); font-size: 0.76rem; line-height: 1.2; }
+.tick-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 7px; border-radius: 7px; background: var(--bg-input); border: 1px solid var(--border); font-size: 0.76rem; line-height: 1.25; }
 .sym-chip { display: inline-flex; align-items: center; padding: 1px 5px; border-radius: 4px; background: color-mix(in srgb, var(--hint-color) 16%, transparent); color: var(--hint-color); font-weight: 800; font-size: 0.72rem; border: 1px solid color-mix(in srgb, var(--hint-color) 35%, transparent); }
 .num-chip { color: var(--text-heading); font-weight: 800; font-size: 0.8rem; font-variant-numeric: tabular-nums; letter-spacing: 0.03em; }
 .unit-chip { color: var(--text-muted); font-weight: 700; font-size: 0.72rem; }
-.slider-warn-msg { display: none; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 7px; background: color-mix(in srgb, var(--danger) 14%, var(--bg-input)); border: 1px solid color-mix(in srgb, var(--danger) 48%, transparent); color: var(--danger); font-size: 0.73rem; font-weight: 700; animation: popIn 0.2s ease; }
+.slider-warn-msg { display: none; align-items: center; gap: 5px; padding: 5px 9px; border-radius: 8px; background: color-mix(in srgb, var(--danger) 14%, var(--bg-input)); border: 1px solid color-mix(in srgb, var(--danger) 48%, transparent); color: var(--danger); font-size: 0.74rem; font-weight: 700; line-height: 1.35; animation: popIn 0.2s ease; }
 .slider-warn-msg.show { display: inline-flex; }
 .slider-box.box-shake-err { animation: inputErrorShake 0.44s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; border-color: var(--danger) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 24%, transparent) !important; }
 .input-unit-wrap.input-shake-err { border-color: var(--danger) !important; background: color-mix(in srgb, var(--danger) 10%, var(--bg-input)); }
-.bill-card { background: var(--bg-box-active); border: 1.5px solid var(--border-focus); border-radius: 13px; padding: 8px 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; box-shadow: inset 0 0 18px rgba(99, 102, 241, 0.05); }
-.bill-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border); font-size: 0.78rem; flex-wrap: wrap; }
+.bill-card { background: var(--bg-box-active); border: 1.5px solid var(--border-focus); border-radius: 14px; padding: 9px 11px; margin-bottom: 11px; display: flex; flex-direction: column; gap: 5px; box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.06); }
+.bill-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 9px; background: var(--bg-input); border: 1px solid var(--border); font-size: 0.79rem; line-height: 1.35; flex-wrap: wrap; transition: border-color 0.2s ease, transform 0.2s ease; }
+.bill-row:hover { border-color: var(--border-focus); transform: translateX(2px); }
 .bill-lbl { display: inline-flex; align-items: center; gap: 5px; color: var(--text-muted); font-weight: 600; min-width: 0; flex-wrap: wrap; }
 .bill-lbl strong { color: var(--text-main); font-weight: 700; }
 .bill-tag { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 5px; font-size: 0.72rem; font-weight: 800; background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent); letter-spacing: 0.02em; }
-.bill-val { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; font-size: 0.82rem; color: var(--text-heading); white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: 0.025em; margin-left: auto; }
+.bill-val { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; font-size: 0.83rem; color: var(--text-heading); white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-left: auto; }
 .bdt-sym { display: inline-flex; align-items: center; justify-content: center; padding: 1px 5px; border-radius: 4px; background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); border: 1px solid color-mix(in srgb, var(--success) 35%, transparent); font-size: 0.73rem; font-weight: 800; }
 .curr-pill { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; border-radius: 5px; background: color-mix(in srgb, var(--hint-color) 14%, transparent); color: var(--hint-color); border: 1px solid color-mix(in srgb, var(--hint-color) 32%, transparent); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.02em; }
-.bill-total-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 7px 9px; margin-top: 2px; border-radius: 9px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--bg-input)), color-mix(in srgb, var(--success) 12%, var(--bg-input))); border: 1.5px solid color-mix(in srgb, var(--accent) 55%, var(--border-focus)); flex-wrap: wrap; }
-.bill-total-lbl { font-size: 0.84rem; font-weight: 800; color: var(--text-heading); }
-.bill-total-val { display: inline-flex; align-items: center; gap: 5px; font-size: 0.96rem; font-weight: 800; color: var(--success); font-variant-numeric: tabular-nums; letter-spacing: 0.025em; margin-left: auto; }
-.btn-submit { height: 48px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: clamp(1rem, 3.8vw, 1.15rem); line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.015em; }
+.bill-total-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; margin-top: 2px; border-radius: 10px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--bg-input)), color-mix(in srgb, var(--success) 13%, var(--bg-input))); border: 1.5px solid color-mix(in srgb, var(--accent) 55%, var(--border-focus)); box-shadow: 0 4px 14px rgba(99, 102, 241, 0.12); flex-wrap: wrap; }
+.bill-total-lbl { font-size: 0.85rem; font-weight: 800; color: var(--text-heading); }
+.bill-total-val { display: inline-flex; align-items: center; gap: 5px; font-size: 0.98rem; font-weight: 800; color: var(--success); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-left: auto; }
+.btn-submit { height: 48px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: clamp(1rem, 3.8vw, 1.15rem); line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.015em; }
 .btn-submit.is-loading, .btn-submit.is-cooldown { background: color-mix(in srgb, var(--muted-status) 22%, var(--bg-input)) !important; color: var(--text-muted) !important; border: 1.5px solid color-mix(in srgb, var(--muted-status) 45%, var(--border)) !important; box-shadow: none !important; animation: none !important; cursor: not-allowed !important; transform: none !important; filter: grayscale(1) !important; font-size: clamp(0.84rem, 3.2vw, 0.96rem); }
 .btn-submit.is-cooldown::before { background: color-mix(in srgb, var(--muted-status) 26%, transparent) !important; }
 @keyframes inputErrorShake {
@@ -39,7 +41,7 @@
 }
 @media (max-width: 640px) {
   .slider-box { padding: 8px 10px; margin-bottom: 7px; gap: 4px; }
-  .slider-head label { font-size: 0.83rem; } .slider-help-text { font-size: 0.68rem; }
+  .slider-head label { font-size: 0.84rem; } .slider-help-text { font-size: 0.69rem; } .input-num { width: 74px; }
   .tick-badge { font-size: 0.73rem; padding: 2px 6px; } .num-chip { font-size: 0.77rem; }
   .bill-card { padding: 7px 8px; gap: 4px; } .bill-row { padding: 4px 6px; font-size: 0.74rem; } .bill-val { font-size: 0.78rem; }
   .bill-total-row { padding: 6px 8px; } .bill-total-lbl { font-size: 0.78rem; } .bill-total-val { font-size: 0.88rem; }
