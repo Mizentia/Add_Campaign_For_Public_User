@@ -92,7 +92,7 @@ window.cloudFetchStatuses = async function (idsCsv) {
   for (const b of STUDIO_BASES) { try { const d = await fetch(`${b}/api/campaign-orders/status?ids=${encodeURIComponent(idsCsv)}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null); if (d?.success) return d; } catch (_) {} }
   const statuses = {}, ids = String(idsCsv || '').split(',').filter(Boolean).slice(0, 20);
   await Promise.all(ids.map(async id => {
-    try { const r = await fetch(`${FS_BASE}/campaign_orders/${encodeURIComponent(id)}`, { cache: 'no-store' }); if (r.ok) { const d = parseFsVal({ mapValue: await r.json() }); if (d) statuses[id] = { found: true, status: d.status || 'pending', publicNote: d.publicNote || '', updatedAt: d.updatedAt }; } } catch (_) {}
+    try { const r = await fetch(`${FS_BASE}/campaign_orders/${encodeURIComponent(id)}`, { cache: 'no-store' }); if (r.ok) { const d = parseFsVal({ mapValue: await r.json() }); if (d) statuses[id] = { found: true, status: d.status || 'pending', publicNote: d.publicNote || '', updatedAt: d.updatedAt }; } else if (r.status === 404) statuses[id] = { found: false, status: 'deleted' }; } catch (_) {}
   }));
   return { success: Object.keys(statuses).length > 0, statuses };
 };

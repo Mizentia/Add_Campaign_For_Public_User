@@ -49,7 +49,7 @@ async function handleOrderSubmission(req, res) {
     dailyBudget: num(body.dailyBudget), totalAmount: num(body.totalAmount), baseBDT: num(body.baseBDT), totalBDT: num(body.totalBDT),
     budgetUSD: num(body.budgetUSD) || 10,
     durationDays: num(body.durationDays) || 4,
-    pageOrPostUrl: '',
+    pageOrPostUrl: str(body.pageOrPostUrl, 300),
     notes: str(body.notes, 300),
     userAgent: str(req.headers['user-agent'], 200),
     lang: str(body.lang, 4),

@@ -24,6 +24,7 @@
           <button type="button" id="themeToggleBtn" class="btn-ghost" title="Theme" data-i18n-title="t_theme"><span class="btn-ico" id="themeIco">☀️</span><span class="btn-lbl" id="themeLbl">লাইট</span></button>
           <button type="button" id="langToggleBtn" class="btn-ghost" title="Language" data-i18n-title="t_lang"><span class="btn-ico" id="langIco">🇬🇧</span><span class="btn-lbl" id="langLbl">English</span></button>
           <button type="button" id="viewOrdersBtn" class="btn-ghost" title="Orders" data-i18n-title="t_orders"><span class="btn-ico">📋</span><span class="btn-lbl" data-i18n="btn_orders">আমার অর্ডারসমূহ</span><span id="ordersCountBadge" class="orders-count-badge">০</span></button>
+          <button type="button" id="editProfileBtn" class="btn-ghost" title="Edit Profile" data-i18n-title="btn_profile_edit"><span class="btn-ico">✏️</span><span class="btn-lbl" data-i18n="btn_profile_edit">নাম/ফোন এডিট</span></button>
           <button type="button" id="aboutHelpBtn" class="btn-ghost" title="Helpline" data-i18n-title="t_help"><span class="btn-ico">👤</span><span class="btn-lbl" data-i18n="btn_about_short">হেল্পলাইন</span></button>
         </div>
         <button type="button" id="menuToggleBtn" class="btn-menu-trigger" aria-label="Menu" title="Menu" data-i18n-title="t_menu">
@@ -38,16 +39,20 @@
           <div class="platform-grid" id="platformSelect"></div>
           <div class="curr-bar-wrap"><div class="currency-row" id="currencySelect"></div><button type="button" id="currDropBtn" class="curr-drop-btn" aria-label="All Currencies" title="All Currencies" data-i18n-title="t_all_curr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button><div id="currDropMenu" class="curr-drop-menu hidden"></div></div>
           <div class="slider-box">
-            <div class="slider-head"><div class="slider-title-wrap"><label id="lblBudgetTitle">দৈনিক বাজেট (USD $)</label><span class="slider-help-text" data-i18n="help_budget">প্রতিদিন সর্বনিম্ন থেকে সর্বোচ্চ কত বাজেটে বিজ্ঞাপন চালাতে চান তা নির্ধারণ করুন</span></div><div class="input-unit-wrap"><span class="unit-prefix" id="budgetUnitPrefix">$</span><input type="text" inputmode="decimal" id="budgetUSD" class="input-ctrl input-num" value="১০" autocomplete="off" readonly required></div></div>
+            <div class="slider-head"><div class="slider-title-wrap"><label for="budgetUSD" id="lblBudgetTitle">দৈনিক বাজেট (USD $)</label><span class="slider-help-text" data-i18n="help_budget">প্রতিদিন সর্বনিম্ন থেকে সর্বোচ্চ কত বাজেটে বিজ্ঞাপন চালাতে চান তা নির্ধারণ করুন</span></div><div class="input-unit-wrap"><span class="unit-prefix" id="budgetUnitPrefix">$</span><input type="text" inputmode="decimal" id="budgetUSD" class="input-ctrl input-num" value="১০" autocomplete="off" required></div></div>
             <div id="budgetWarnMsg" class="slider-warn-msg" role="alert"></div>
             <input type="range" id="budgetSlider" class="range-slider" min="2" max="100" step="1" value="10">
             <div class="slider-ticks"><span id="minBudgetTick">$২</span><span id="maxBudgetTick">$১০০</span></div>
           </div>
           <div class="slider-box">
-            <div class="slider-head"><div class="slider-title-wrap"><label data-i18n="lbl_duration">কত দিন চলবে (মেয়াদ)</label><span class="slider-help-text" data-i18n="help_duration">আপনার বিজ্ঞাপনটি একটানা মোট কত দিন চালাতে চান তা নির্ধারণ করুন</span></div><div class="input-unit-wrap"><input type="text" inputmode="numeric" id="durationDays" class="input-ctrl input-num" value="৪" autocomplete="off" readonly required><span class="unit-suffix" data-i18n="lbl_days">দিন</span></div></div>
+            <div class="slider-head"><div class="slider-title-wrap"><label for="durationDays" data-i18n="lbl_duration">কত দিন চলবে (মেয়াদ)</label><span class="slider-help-text" data-i18n="help_duration">আপনার বিজ্ঞাপনটি একটানা মোট কত দিন চালাতে চান তা নির্ধারণ করুন</span></div><div class="input-unit-wrap"><input type="text" inputmode="numeric" id="durationDays" class="input-ctrl input-num" value="৪" autocomplete="off" required><span class="unit-suffix" data-i18n="lbl_days">দিন</span></div></div>
             <div id="durationWarnMsg" class="slider-warn-msg" role="alert"></div>
             <input type="range" id="durationSlider" class="range-slider" min="4" max="100" step="1" value="4">
             <div class="slider-ticks"><span id="minDaysTick">৪ দিন</span><span id="maxDaysTick">১০০ দিন</span></div>
+          </div>
+          <div class="slider-box link-note-box">
+            <label for="pageOrPostUrl" class="link-note-lbl" data-i18n="lbl_post_url">🔗 পেজ / পোস্ট লিংক বা বিশেষ নির্দেশনা (ঐচ্ছিক)</label>
+            <input type="text" id="pageOrPostUrl" class="input-ctrl input-compact" data-i18n-placeholder="ph_post_url" placeholder="বুস্ট করার পোস্ট/পেজ লিংক বা নোট লিখুন (ঐচ্ছিক)..." maxlength="280" autocomplete="off">
           </div>
           <div id="calcBreakdown" class="bill-card"></div>
           <button type="submit" id="submitBtn" class="btn-submit" data-i18n="btn_submit">🚀 অ্যাড অর্ডার করুন</button>
@@ -58,19 +63,19 @@
     <div id="entryGateModal" class="gate-backdrop hidden" role="dialog" aria-modal="true">
       <div class="gate-card">
         <span class="gate-badge" data-i18n="gate_badge">স্বাগতম • নকশা ল্যাব</span>
-        <h2 class="gate-title" data-i18n="gate_title">প্রবেশ করতে আপনার নাম দিন</h2>
+        <h2 id="gateModalTitle" class="gate-title" data-i18n="gate_title">প্রবেশ করতে আপনার নাম দিন</h2>
         <p class="gate-sub" data-i18n="gate_sub">আপনার নাম দিয়ে পোর্টালে প্রবেশ করুন। ফোন নাম্বার দেওয়া ঐচ্ছিক (চাইলে দিতে পারেন, না চাইলে খালি রাখুন)।</p>
         <form id="entryGateForm" novalidate style="display:flex;flex-direction:column;gap:12px;">
           <div class="gate-field"><label for="gateNameInput" data-i18n="lbl_name">আপনার পূর্ণ নাম (বাধ্যতামূলক) *</label><input type="text" id="gateNameInput" class="input-ctrl" data-i18n-placeholder="ph_name" placeholder="আপনার পুরো নাম লিখুন..." autocomplete="name" required><span id="gateNameErr" class="gate-err" data-i18n="err_name_req">পোর্টালে প্রবেশ করতে অনুগ্রহ করে আপনার নাম লিখুন।</span></div>
           <div class="gate-field"><label for="gatePhoneInput" data-i18n="lbl_phone">মোবাইল / হোয়াটসঅ্যাপ নাম্বার (ঐচ্ছিক)</label><input type="tel" id="gatePhoneInput" class="input-ctrl" data-i18n-placeholder="ph_phone" placeholder="০১XXXXXXXXX (ঐচ্ছিক)" autocomplete="tel"></div>
-          <button type="submit" class="btn-submit" data-i18n="btn_enter_portal">প্রবেশ করুন →</button>
+          <div class="gate-actions"><button type="button" id="gateCancelBtn" class="btn-confirm-no hidden" data-i18n="btn_cancel">বাতিল</button><button type="submit" id="gateSubmitBtn" class="btn-submit" data-i18n="btn_enter_portal">প্রবেশ করুন →</button></div>
         </form>
       </div>
     </div>
 
     <div id="orderConfirmToast" class="order-confirm-float hidden" role="status" aria-live="polite"><span class="confirm-float-ico">✅</span><div><div id="confirmToastTitle" style="font-weight:800;font-size:0.86rem;"></div><div id="confirmToastSub" style="font-size:0.74rem;color:var(--text-muted);"></div></div></div>
 
-    <div id="orderModal" class="modal-backdrop hidden">
+    <div id="orderModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
       <div class="modal-card">
         <div class="modal-header"><h3 id="modalTitle">আমার অর্ডারসমূহ</h3><button id="closeModalBtn" type="button" class="btn-close" data-i18n-title="t_close">&times;</button></div>
         <div id="modalBody" class="modal-body"></div>

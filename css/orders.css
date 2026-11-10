@@ -8,6 +8,16 @@
 .gate-field label { font-size: 0.8rem; font-weight: 700; color: var(--text-heading); }
 .gate-err { font-size: 0.78rem; font-weight: 700; color: var(--danger); display: none; }
 .gate-err.show { display: block; }
+.gate-actions { display: flex; align-items: center; gap: 8px; }
+.gate-actions .btn-confirm-no { height: 48px; padding: 0 16px; border-radius: 12px; font-size: 0.88rem; }
+.gate-actions .btn-confirm-no.hidden { display: none; }
+.orders-toolbar-btns { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.btn-edit-profile { display: inline-flex; align-items: center; gap: 4px; padding: 7px 11px; border-radius: 9px; background: color-mix(in srgb, var(--accent) 12%, var(--bg-pill)); border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent); color: var(--accent); font-size: 0.75rem; font-weight: 800; cursor: pointer; white-space: nowrap; transition: all 0.22s ease; }
+.btn-edit-profile:hover { background: var(--accent); color: #ffffff; transform: translateY(-1px); }
+.order-id-wrap { display: inline-flex; align-items: center; gap: 6px; }
+.btn-copy-id { padding: 2px 7px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-input); color: var(--text-muted); font-size: 0.68rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+.btn-copy-id:hover { border-color: var(--accent); color: var(--accent); }
+.order-link-row { margin-top: 4px; font-size: 0.75rem; color: var(--text-muted); word-break: break-all; }
 #viewOrdersBtn { position: relative; overflow: visible; border-color: color-mix(in srgb, var(--accent) 42%, var(--border)); }
 .orders-count-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--active-gradient); color: #ffffff; font-size: 0.7rem; font-weight: 800; line-height: 1; margin-left: 3px; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.45); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease; }
 .orders-count-badge.hidden { display: none; }

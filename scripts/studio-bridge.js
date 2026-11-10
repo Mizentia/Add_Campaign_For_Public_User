@@ -79,6 +79,7 @@ async function fetchStatuses(ids) {
     try {
       const r = await fetch(`${FS_ORDERS_BASE}/${encodeURIComponent(id)}`, { signal: AbortSignal.timeout(3500) });
       if (r.ok) { const d = fromFsFields((await r.json()).fields); statuses[id] = { found: true, status: d.status || 'pending', publicNote: d.publicNote || '', updatedAt: d.updatedAt }; }
+      else if (r.status === 404) statuses[id] = { found: false, status: 'deleted' };
     } catch (_) {}
   }));
   return { success: Object.keys(statuses).length > 0, statuses };

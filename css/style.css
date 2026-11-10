@@ -88,6 +88,8 @@ body { background-color: var(--bg-primary); background-image: var(--bg-gradient)
 }
 @media (max-width: 640px) {
   body { padding: 8px 6px; } .card { padding: 12px 10px; border-radius: 14px; }
+  .header-slide-actions { top: calc(100% + 8px); right: 0; transform: translateY(0) scale(1); transform-origin: top right; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100vw - 24px); }
+  .header-slide-actions.hidden { transform: translateY(-8px) scale(0.94); }
   .plat-btn { padding: 7px 4px; gap: 5px; font-size: 0.72rem; border-radius: 9px; }
   .curr-btn { padding: 6px 8px; font-size: 0.69rem; gap: 4px; border-radius: 8px; }
   .curr-btn.active { padding: 6px 10px; } .curr-full { font-size: 0.69rem; }
@@ -95,4 +97,3 @@ body { background-color: var(--bg-primary); background-image: var(--bg-gradient)
   .flag-svg { width: 15px; height: 10px; }
   .slider-box { padding: 11px 12px; margin-bottom: 10px; } .slider-head label { font-size: 0.84rem; } .input-num { width: 74px; font-size: 0.95rem; }
 }
-@media (max-width: 480px) { .btn-ghost:not(#viewOrdersBtn) .btn-lbl { display: none; } .btn-ghost:not(#viewOrdersBtn) { width: 32px; height: 32px; padding: 0; } #viewOrdersBtn { padding: 5px 8px; height: 32px; font-size: 0.7rem; } }

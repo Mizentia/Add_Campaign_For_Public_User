@@ -63,7 +63,7 @@
     const needScroll = window.scrollY > 12 || (hdr && hdr.getBoundingClientRect().top < 0), d = needScroll ? 420 : 0;
     if (needScroll) try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) { window.scrollTo(0, 0); }
     updateBadge(prevCount, false);
-    showFloatingToast(tr('toast_confirmed_title'), `${tr('order_id_lbl')} ${toLocNum(orderId)} • ${tr('toast_confirmed_sub')}`, 1200 + d);
+    showFloatingToast(tr('toast_confirmed_title'), `${tr('order_id_lbl')} ${orderId} • ${tr('toast_confirmed_sub')}`, 1200 + d);
     const menu = document.getElementById('headerMenuDropdown'), trig = document.getElementById('menuToggleBtn'), ordBtn = document.getElementById('viewOrdersBtn');
     animTimers.push(setTimeout(() => {
       menu?.classList.remove('hidden');

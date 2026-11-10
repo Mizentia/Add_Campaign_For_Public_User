@@ -29,13 +29,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!currRow || !currDropMenu) return; currDropBtn?.classList.remove('hidden'); const r = currRow.getBoundingClientRect(), overflow = [];
     currRow.querySelectorAll('.curr-btn').forEach(btn => { const b = btn.getBoundingClientRect(); if (b.left < r.left - 2 || b.right > r.right + 2) { const c = currencies.find(x => x.code === btn.dataset.curr); if (c) overflow.push(c); } });
     currDropBtn?.classList.toggle('hidden', !overflow.length); if (!overflow.length) return closeCurrDrop();
-    currDropMenu.innerHTML = overflow.map(c => `<button type="button" class="curr-btn" data-curr="${c.code}">${getFlag(c)}<span class="curr-sym">${c.sym}</span><span class="curr-code">${c.code}</span></button>`).join('');
-    currDropMenu.querySelectorAll('.curr-btn').forEach(btn => btn.addEventListener('click', () => selectCurrency(btn.dataset.curr, true)));
+    currDropMenu.innerHTML = `<input type="search" id="currSearchInp" class="input-ctrl curr-search-inp" placeholder="${tr('ph_curr_search')}" autocomplete="off"><div class="curr-drop-list">${overflow.map(c => `<button type="button" class="curr-btn" data-curr="${c.code}" data-q="${(c.code + ' ' + c.sym + ' ' + (c.nameEn || '') + ' ' + (c.nameBn || '')).toLowerCase()}">${getFlag(c)}<span class="curr-sym">${c.sym}</span><span class="curr-code">${c.code}</span><span class="curr-drop-name">• ${getName(c)}</span></button>`).join('')}</div><div id="currNoMatch" class="curr-no-match hidden">${tr('curr_no_match')}</div>`;
+    const sInp = currDropMenu.querySelector('#currSearchInp'), noM = currDropMenu.querySelector('#currNoMatch'), btns = [...currDropMenu.querySelectorAll('.curr-btn')];
+    sInp?.addEventListener('click', e => e.stopPropagation()); sInp?.addEventListener('input', () => { const q = sInp.value.trim().toLowerCase(); let n = 0; btns.forEach(b => { const m = !q || b.dataset.q.includes(q); b.classList.toggle('hidden', !m); if (m) n++; }); noM?.classList.toggle('hidden', n > 0); });
+    btns.forEach(btn => btn.addEventListener('click', () => selectCurrency(btn.dataset.curr, true)));
   };
   menuToggleBtn?.addEventListener('click', (e) => { e.stopPropagation(); menuDropdown?.classList.toggle('hidden'); closeCurrDrop(); });
-  currDropBtn?.addEventListener('click', (e) => { e.stopPropagation(); syncDropdown(); const isHid = currDropMenu?.classList.toggle('hidden'); currDropBtn.classList.toggle('open', !isHid); menuDropdown?.classList.add('hidden'); });
+  currDropBtn?.addEventListener('click', (e) => { e.stopPropagation(); syncDropdown(); const isHid = currDropMenu?.classList.toggle('hidden'); currDropBtn.classList.toggle('open', !isHid); menuDropdown?.classList.add('hidden'); if (!isHid) setTimeout(() => document.getElementById('currSearchInp')?.focus(), 40); });
   currRow?.addEventListener('scroll', syncDropdown, { passive: true }); window.addEventListener('resize', syncDropdown);
-  const blurOutsideInputs = (t) => { [budgetInput, durationInput].forEach(el => { if (el && t !== el) { el.readOnly = true; if (document.activeElement === el) el.blur(); } }); };
+  const blurOutsideInputs = (t) => { [budgetInput, durationInput].forEach(el => { if (el && t !== el && document.activeElement === el) el.blur(); }); };
   document.addEventListener('touchstart', (e) => blurOutsideInputs(e.target), { capture: true, passive: true });
   document.addEventListener('pointerdown', (e) => {
     blurOutsideInputs(e.target);
@@ -43,9 +45,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (currDropMenu && !currDropMenu.classList.contains('hidden') && !currDropMenu.contains(e.target) && !currDropBtn?.contains(e.target)) closeCurrDrop();
     if (!e.target.closest?.('.slider-box')) document.querySelectorAll('.slider-box').forEach(b => b.classList.remove('active-box'));
   }, true);
-  document.addEventListener('click', (e) => {
-    if (menuDismissed || (menuDropdown && !menuDropdown.classList.contains('hidden') && !menuDropdown.contains(e.target) && !menuToggleBtn?.contains(e.target))) { menuDismissed = false; menuDropdown?.classList.add('hidden'); e.preventDefault(); e.stopPropagation(); }
-  }, true);
+  document.addEventListener('click', (e) => { if (menuDismissed || (menuDropdown && !menuDropdown.classList.contains('hidden') && !menuDropdown.contains(e.target) && !menuToggleBtn?.contains(e.target))) { menuDismissed = false; menuDropdown?.classList.add('hidden'); e.preventDefault(); e.stopPropagation(); } }, true);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeCurrDrop(); menuDropdown?.classList.add('hidden'); if (!modal?.classList.contains('hidden')) closeModal(); document.getElementById('gateCancelBtn')?.click(); } });
   const selectCurrency = (code, fromDrop = false) => {
     const idx = currencies.findIndex(c => c.code === code); if (idx === -1) return;
     const next = currencies[idx], prevBdt = (parseFloat(toEnNum(budgetInput.value).replace(/[^0-9.]/g, '')) || activeCurr.minBudget) * activeCurr.rate, changed = next.code !== activeCurr.code;
@@ -72,8 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return { dailyVal, dailyDisp, days, totalCurr, baseBdt, vatPct, markupPct, vatBdt, markupBdt, totalBdtNum: +(baseBdt + vatBdt + markupBdt).toFixed(2), bLim, dLim };
   };
   const updateCalc = () => {
-    const { code, sym } = activeCurr, totals = computeTotals();
-    savePref('nl_camp_budget', String(totals.dailyVal)); savePref('nl_camp_days', String(totals.days));
+    const { code, sym } = activeCurr, totals = computeTotals(); savePref('nl_camp_budget', String(totals.dailyVal)); savePref('nl_camp_days', String(totals.days));
     document.getElementById('budgetUnitPrefix').textContent = sym; document.getElementById('lblBudgetTitle').textContent = `${tr('lbl_budget_prefix')} (${code} ${sym})`;
     window.CalcUI?.renderCalcUI({ activeCurr, activePlat, totals, tr, toLocNum, getPlatName, isBn: currentLang === 'bn' });
   };
@@ -87,13 +87,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('langToggleBtn')?.addEventListener('click', () => { applyLanguage(currentLang === 'bn' ? 'en' : 'bn'); menuDropdown?.classList.add('hidden'); });
   const showModal = (title, html) => { modalTitle.textContent = title; modalBody.innerHTML = html; modal.classList.remove('hidden'); menuDropdown?.classList.add('hidden'); closeCurrDrop(); };
   document.getElementById('closeModalBtn')?.addEventListener('click', closeModal); modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.getElementById('editProfileBtn')?.addEventListener('click', () => { menuDropdown?.classList.add('hidden'); window.CampaignOrders?.openProfileEdit?.(); });
   document.getElementById('aboutHelpBtn')?.addEventListener('click', () => { window.CampaignOrders?.markModalClosed?.(); const cleanTel = toEnNum(supportInfo.phone).replace(/[^0-9]/g, ''); showModal(tr('about_title'), `<p style="color:var(--text-muted);margin-bottom:12px;line-height:1.5;">${tr('about_desc')}</p><div class="order-pill"><strong>${tr('about_helpline')}</strong><div class="help-row-wrap"><a class="help-link" href="tel:+${cleanTel}">${toLocNum(supportInfo.phone)}</a><a class="help-wa-chip" href="https://wa.me/${cleanTel}" target="_blank" rel="noopener">💬 WhatsApp</a></div></div><div class="order-pill"><strong>${tr('about_fb')}</strong><div style="margin-top:5px;"><a class="help-link" href="${supportInfo.fb}" target="_blank" rel="noopener">${supportInfo.fb}</a></div></div><div class="order-pill"><strong>${tr('about_email')}</strong><div style="margin-top:5px;"><a class="help-link" href="mailto:${supportInfo.email}">${supportInfo.email}</a></div></div><p style="font-size:0.8rem;color:var(--hint-color);text-align:center;margin-top:10px;font-weight:700;">${toLocNum(tr('about_hours'))}</p>`); });
-  form.addEventListener('submit', async (e) => { e.preventDefault(); budgetInput?.blur(); durationInput?.blur(); const { dailyVal, days, totalCurr, baseBdt, vatPct, markupPct, totalBdtNum } = computeTotals(); await window.CampaignOrders?.submitInstantOrder({ platform: activePlat?.id || 'Facebook', activePlat, activeCurr, dailyVal, days, totalCurr, baseBdt, vatPct, markupPct, totalBdtNum, totalUsd: +(totalBdtNum / 125).toFixed(2) }); });
+  form.addEventListener('submit', async (e) => { e.preventDefault(); budgetInput?.blur(); durationInput?.blur(); const { dailyVal, days, totalCurr, baseBdt, vatPct, markupPct, totalBdtNum } = computeTotals(), usdRate = Number(currencies.find(c => c.code === 'USD')?.rate) || 125, pageOrPostUrl = document.getElementById('pageOrPostUrl')?.value || ''; await window.CampaignOrders?.submitInstantOrder({ platform: activePlat?.id || 'Facebook', activePlat, activeCurr, dailyVal, days, totalCurr, baseBdt, vatPct, markupPct, totalBdtNum, totalUsd: +(activeCurr.code === 'USD' ? totalCurr : (baseBdt / usdRate)).toFixed(2), pageOrPostUrl }); });
   document.getElementById('viewOrdersBtn')?.addEventListener('click', () => window.CampaignOrders?.openOrdersModal());
-  const savedB = parseFloat(localStorage.getItem('nl_camp_budget')), savedD = parseInt(localStorage.getItem('nl_camp_days'), 10);
-  if (savedD) durationInput.value = toLocNum(savedD);
-  restorePlatState(platforms); restoreCurrState(currencies); applyLanguage(currentLang); syncSliderBounds(savedB || undefined);
-  window.CampaignOrders?.init({ tr, toLocNum, toEnNum, showModal, getLang: () => currentLang });
+  const savedB = parseFloat(localStorage.getItem('nl_camp_budget')), savedD = parseInt(localStorage.getItem('nl_camp_days'), 10); if (savedD) durationInput.value = toLocNum(savedD);
+  restorePlatState(platforms); restoreCurrState(currencies); applyLanguage(currentLang); syncSliderBounds(savedB || undefined); window.CampaignOrders?.init({ tr, toLocNum, toEnNum, showModal, getLang: () => currentLang });
   const remoteCfg = await window.fetchStudioCampaignConfig(), activePlats = window.normalizeCampaignPlatforms(remoteCfg?.platforms).filter(p => p && p.id && p.enabled !== false && p.forPublic !== false), activeList = (Array.isArray(remoteCfg?.currencies) ? remoteCfg.currencies : []).filter(c => c && c.code && c.enabled !== false && c.forPublic !== false);
   if (activePlats.length) { restorePlatState(activePlats); renderPlatforms(); }
   if (activeList.length) { restoreCurrState(activeList); renderCurrencies(); syncSliderBounds(parseFloat(localStorage.getItem('nl_camp_budget')) || undefined); } else updateCalc();
