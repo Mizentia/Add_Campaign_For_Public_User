@@ -27,13 +27,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
   const restoreCurrState = (list) => { const normed = list.map(normCurr); try { const ord = JSON.parse(localStorage.getItem('nl_camp_curr_order') || '[]'); if (ord.length) normed.sort((a, b) => (ord.indexOf(a.code) < 0 ? 999 : ord.indexOf(a.code)) - (ord.indexOf(b.code) < 0 ? 999 : ord.indexOf(b.code))); } catch (_) {} currencies = normed; const savedCode = localStorage.getItem('nl_camp_curr'); activeCurr = currencies.find(c => c.code === savedCode) || currencies[0]; };
   const syncDropdown = () => {
-    if (!currRow || !currDropMenu) return; currDropBtn?.classList.remove('hidden'); const r = currRow.getBoundingClientRect(), overflow = [];
-    currRow.querySelectorAll('.curr-btn').forEach(btn => { const b = btn.getBoundingClientRect(); if (b.left < r.left - 2 || b.right > r.right + 2) { const c = currencies.find(x => x.code === btn.dataset.curr); if (c) overflow.push(c); } });
+    if (!currRow || !currDropMenu) return; if (!currDropMenu.classList.contains('hidden')) return; currDropBtn?.classList.remove('hidden'); const r = currRow.getBoundingClientRect(), overflow = [];
+    currRow.querySelectorAll('.curr-btn').forEach(btn => { const b = btn.getBoundingClientRect(); if (b.left < r.left - 2 || b.right > r.right + 2) overflow.push(btn.dataset.curr); });
     currDropBtn?.classList.toggle('hidden', !overflow.length); if (!overflow.length) return closeCurrDrop();
-    currDropMenu.innerHTML = `<input type="search" id="currSearchInp" class="input-ctrl curr-search-inp" placeholder="${tr('ph_curr_search')}" autocomplete="off"><div class="curr-drop-list">${overflow.map(c => `<button type="button" class="curr-btn" data-curr="${c.code}" data-q="${(c.code + ' ' + c.sym + ' ' + (c.nameEn || '') + ' ' + (c.nameBn || '')).toLowerCase()}">${getFlag(c)}<span class="curr-sym">${c.sym}</span><span class="curr-code">${c.code}</span><span class="curr-drop-name">• ${getName(c)}</span></button>`).join('')}</div><div id="currNoMatch" class="curr-no-match hidden">${tr('curr_no_match')}</div>`;
-    const sInp = currDropMenu.querySelector('#currSearchInp'), noM = currDropMenu.querySelector('#currNoMatch'), btns = [...currDropMenu.querySelectorAll('.curr-btn')];
-    sInp?.addEventListener('click', e => e.stopPropagation()); sInp?.addEventListener('input', () => { const q = sInp.value.trim().toLowerCase(); let n = 0; btns.forEach(b => { const m = !q || b.dataset.q.includes(q); b.classList.toggle('hidden', !m); if (m) n++; }); noM?.classList.toggle('hidden', n > 0); });
-    btns.forEach(btn => btn.addEventListener('click', () => selectCurrency(btn.dataset.curr, true)));
+    window.CurrDrop?.render({ menu: currDropMenu, list: currencies, overflowCodes: overflow, tr, getFlag, getName, onPick: (code) => selectCurrency(code, true) });
   };
   menuToggleBtn?.addEventListener('click', (e) => { e.stopPropagation(); menuDropdown?.classList.toggle('hidden'); closeCurrDrop(); });
   currDropBtn?.addEventListener('click', (e) => { e.stopPropagation(); syncDropdown(); const isHid = currDropMenu?.classList.toggle('hidden'); currDropBtn.classList.toggle('open', !isHid); menuDropdown?.classList.add('hidden'); if (!isHid) setTimeout(() => document.getElementById('currSearchInp')?.focus(), 40); });
