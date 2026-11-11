@@ -38,10 +38,10 @@
           <div class="platform-grid" id="platformSelect"></div>
           <div class="curr-bar-wrap"><div class="currency-row" id="currencySelect"></div><button type="button" id="currDropBtn" class="curr-drop-btn" aria-label="All Currencies" title="All Currencies" data-i18n-title="t_all_curr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button><div id="currDropMenu" class="curr-drop-menu hidden"></div></div>
           <div class="slider-box">
-            <div class="slider-head"><label id="lblBudgetTitle" class="slider-title-lbl"><span class="lbl-ico">💰</span><span id="lblBudgetTxt" data-i18n="lbl_budget_prefix">দৈনিক বাজেট</span><span id="lblBudgetChip" class="lbl-chip">USD $</span></label><div class="input-unit-wrap"><span class="unit-prefix" id="budgetUnitPrefix">$</span><input type="text" inputmode="decimal" id="budgetUSD" class="input-ctrl input-num" value="১০" autocomplete="off" readonly required></div></div>
+            <div class="slider-head"><label id="lblBudgetTitle" class="slider-title-lbl"><span class="lbl-ico">💰</span><span id="lblBudgetTxt" data-i18n="lbl_budget_prefix">দৈনিক বাজেট</span><span id="lblBudgetChip" class="lbl-chip"><span class="chip-code">USD</span><span class="chip-sym">$</span></span></label><div class="input-unit-wrap"><span class="unit-prefix" id="budgetUnitPrefix">$</span><input type="text" inputmode="decimal" id="budgetUSD" class="input-ctrl input-num" value="১০" autocomplete="off" readonly required></div></div>
             <div id="budgetWarnMsg" class="slider-warn-msg" role="alert"></div>
             <input type="range" id="budgetSlider" class="range-slider" min="2" max="100" step="any" value="10">
-            <div class="slider-ticks"><span id="minBudgetTick">$২</span><span id="maxBudgetTick">$১০০</span></div>
+            <div class="slider-ticks"><span id="minBudgetTick">$ ২</span><span id="maxBudgetTick">$ ১০০</span></div>
           </div>
           <div class="slider-box">
             <div class="slider-head"><label id="lblDurationTitle" class="slider-title-lbl"><span class="lbl-ico">🗓️</span><span data-i18n="lbl_duration">কত দিন চলবে</span><span class="lbl-chip" data-i18n="lbl_duration_tag">মেয়াদ</span></label><div class="input-unit-wrap"><input type="text" inputmode="numeric" id="durationDays" class="input-ctrl input-num" value="৪" autocomplete="off" readonly required><span class="unit-suffix" data-i18n="lbl_days">দিন</span></div></div>

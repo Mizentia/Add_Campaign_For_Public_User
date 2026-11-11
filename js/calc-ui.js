@@ -20,7 +20,6 @@
     };
     rafMap.set(slider, requestAnimationFrame(stepFn));
   }
-
   function triggerShakeWarn(inp, warnEl, msgText) {
     const box = inp?.closest('.slider-box'), wrap = inp?.closest('.input-unit-wrap');
     wrap?.classList.remove('is-pending-val');
@@ -29,7 +28,6 @@
     clearTimeout(warnTimers.get(inp));
     warnTimers.set(inp, setTimeout(() => { box?.classList.remove('box-shake-err'); wrap?.classList.remove('input-shake-err'); warnEl?.classList.remove('show'); }, 3000));
   }
-
   function sanitizeRaw(val, allowDec, toEnNum) {
     const en = String(toEnNum(val ?? '')).replace(/।/g, allowDec ? '.' : '');
     if (!allowDec) return en.split('.')[0].replace(/[^0-9]/g, '');
@@ -78,18 +76,20 @@
     });
   }
 
-  function renderCalcUI({ activeCurr, activePlat, totals, tr, toLocNum, getPlatName, isBn }) {
+  function renderCalcUI({ activeCurr, activePlat, totals, tr, toLocNum, getPlatName }) {
     const { code, sym, rate, minBudget, maxBudget, minDays, maxDays } = activeCurr;
     const { dailyVal, dailyDisp, days, totalCurr, baseBdt, vatPct, markupPct, vatBdt, markupBdt, totalBdtNum, bLim, dLim } = totals;
-    const bdtChip = `<span class="bdt-sym">৳</span>`, currSymChip = `<span class="sym-chip">${esc(sym)}</span>`;
+    const currSymChip = `<span class="sym-chip">${esc(sym)}</span>`;
     document.getElementById('minBudgetTick').innerHTML = `<span class="tick-badge">${currSymChip}<span class="num-chip">${toLocNum(minBudget)}</span></span>`;
     document.getElementById('maxBudgetTick').innerHTML = `<span class="tick-badge">${currSymChip}<span class="num-chip">${toLocNum(maxBudget)}${!bLim ? '+' : ''}</span></span>`;
     document.getElementById('minDaysTick').innerHTML = `<span class="tick-badge"><span class="num-chip">${toLocNum(minDays)}</span><span class="unit-chip">${esc(tr('lbl_days'))}</span></span>`;
     document.getElementById('maxDaysTick').innerHTML = `<span class="tick-badge"><span class="num-chip">${toLocNum(maxDays)}${!dLim ? '+' : ''}</span><span class="unit-chip">${esc(tr('lbl_days'))}</span></span>`;
     const fmtNum = (n, maxF = 2) => toLocNum(Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: maxF })), platName = esc(getPlatName(activePlat));
-    const currPill = (val) => `<span class="curr-pill"><span>${esc(sym)}</span><span>${fmtNum(val)}</span></span>`;
+    const currPill = (val) => `<span class="curr-pill"><span class="cp-sym">${esc(sym)}</span><span class="cp-num">${fmtNum(val)}</span></span>`;
+    const bdtPill = (val, cls = '', maxF = 2) => `<span class="bdt-pill ${cls}"><span class="bdt-sym">৳</span><span class="bdt-num">${fmtNum(val, maxF)}</span></span>`;
+    const formulaBadge = `<span class="bill-formula"><span class="bf-sym">${esc(sym)}</span><span class="bf-num">${toLocNum(dailyDisp ?? dailyVal)}</span><span class="bf-mul">×</span><span class="bf-days">${toLocNum(days)} ${esc(tr('lbl_days'))}</span></span>`;
     const box = document.getElementById('calcBreakdown');
-    if (box) box.innerHTML = `<div class="bill-row"><span class="bill-lbl">💱 <strong>${tr('bill_rate_lbl')}</strong> <span class="bill-tag">${esc(code)}</span></span><span class="bill-val">${currPill(1)} = ${bdtChip}<span>${fmtNum(rate, 4)}</span></span></div><div class="bill-row"><span class="bill-lbl">📊 <strong>${tr('bill_base_lbl')}</strong> <span class="bill-tag">${esc(sym)}${toLocNum(dailyDisp ?? dailyVal)}×${toLocNum(days)}</span></span><span class="bill-val">${code !== 'BDT' ? currPill(totalCurr) : ''}${bdtChip}<span>${fmtNum(baseBdt)}</span></span></div><div class="bill-row"><span class="bill-lbl">🏛️ <strong>${platName} ${tr('bill_vat_lbl')}</strong> <span class="bill-tag">${toLocNum(vatPct)}%</span></span><span class="bill-val">+ ${bdtChip}<span>${fmtNum(vatBdt)}</span></span></div><div class="bill-row"><span class="bill-lbl">🏦 <strong>${esc(code)} ${tr('bill_markup_lbl')}</strong> <span class="bill-tag">${toLocNum(markupPct)}%</span></span><span class="bill-val">+ ${bdtChip}<span>${fmtNum(markupBdt)}</span></span></div><div class="bill-total-row"><span class="bill-total-lbl">🧾 ${tr('bill_total_lbl')}</span><span class="bill-total-val">${code !== 'BDT' ? currPill(totalCurr) : ''}${bdtChip}<span>${fmtNum(totalBdtNum)}</span></span></div>`;
+    if (box) box.innerHTML = `<div class="bill-row"><span class="bill-lbl">💱 <strong>${tr('bill_rate_lbl')}</strong> <span class="bill-tag">${esc(code)}</span></span><span class="bill-val">${currPill(1)}<span class="bill-op">=</span>${bdtPill(rate, '', 4)}</span></div><div class="bill-row"><span class="bill-lbl">📊 <strong>${tr('bill_base_lbl')}</strong> ${formulaBadge}</span><span class="bill-val">${code !== 'BDT' ? currPill(totalCurr) : ''}${bdtPill(baseBdt)}</span></div><div class="bill-row"><span class="bill-lbl">🏛️ <strong>${platName} ${tr('bill_vat_lbl')}</strong> <span class="bill-tag">${toLocNum(vatPct)}%</span></span><span class="bill-val"><span class="bill-op">+</span>${bdtPill(vatBdt)}</span></div><div class="bill-row"><span class="bill-lbl">🏦 <strong>${esc(code)} ${tr('bill_markup_lbl')}</strong> <span class="bill-tag">${toLocNum(markupPct)}%</span></span><span class="bill-val"><span class="bill-op">+</span>${bdtPill(markupBdt)}</span></div><div class="bill-total-row"><span class="bill-total-lbl">🧾 ${tr('bill_total_lbl')}</span><span class="bill-total-val">${code !== 'BDT' ? currPill(totalCurr) : ''}${bdtPill(totalBdtNum, 'is-total')}</span></div>`;
     lastSubmitLabel = tr('btn_submit_with_total').replace('{total}', fmtNum(totalBdtNum));
     const btn = document.getElementById('submitBtn');
     if (btn && !btn.classList.contains('is-cooldown') && !btn.classList.contains('is-loading')) btn.textContent = lastSubmitLabel;

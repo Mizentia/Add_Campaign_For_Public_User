@@ -36,8 +36,8 @@ body { background-color: var(--bg-primary); background-image: var(--bg-gradient)
 .curr-drop-btn.open svg { transform: rotate(180deg); }
 .curr-drop-menu { position: absolute; top: calc(100% + 7px); right: 0; max-width: 100%; background: var(--bg-modal); border: 1px solid var(--border-focus); border-radius: 13px; padding: 9px; box-shadow: var(--shadow-card), var(--shadow-focus); z-index: 50; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 6px; max-height: 260px; overflow-y: auto; animation: popIn 0.22s cubic-bezier(0.22, 1, 0.36, 1); }
 .flag-svg { width: 18px; height: 12px; border-radius: 2px; flex-shrink: 0; display: block; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-.curr-sym { font-weight: 800; color: var(--accent); }
-.curr-btn.active .curr-sym { color: #ffffff; }
+.curr-sym { display: inline-flex; align-items: center; justify-content: center; padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--accent) 14%, transparent); font-weight: 800; color: var(--accent); font-size: 0.74rem; unicode-bidi: isolate; direction: ltr; }
+.curr-btn.active .curr-sym { background: rgba(255, 255, 255, 0.22); color: #ffffff; }
 .curr-full { display: none; font-weight: 600; font-size: 0.76rem; opacity: 0.96; }
 .curr-btn.active .curr-full { display: inline; }
 .slider-box { background: var(--bg-pill); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1); }

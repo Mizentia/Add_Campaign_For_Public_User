@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
   const updateCalc = () => {
     const { code, sym } = activeCurr, totals = computeTotals(), bTxt = document.getElementById('lblBudgetTxt'), bChip = document.getElementById('lblBudgetChip');
-    document.getElementById('budgetUnitPrefix').textContent = sym; if (bTxt) bTxt.textContent = tr('lbl_budget_prefix'); if (bChip) bChip.textContent = `${code} ${sym}`;
+    document.getElementById('budgetUnitPrefix').textContent = sym; if (bTxt) bTxt.textContent = tr('lbl_budget_prefix'); if (bChip) bChip.innerHTML = `<span class="chip-code">${code}</span><span class="chip-sym">${sym}</span>`;
     window.CalcUI?.renderCalcUI({ activeCurr, activePlat, totals, tr, toLocNum, getPlatName, isBn: currentLang === 'bn' });
   };
   budgetSlider?.addEventListener('input', () => { blurOutsideInputs(budgetSlider); budgetWarn?.classList.remove('show'); const raw = Number(budgetSlider.value), minB = activeCurr.minBudget, maxB = activeCurr.maxBudget, span = maxB - minB, st = (span <= 20 || !Number.isInteger(minB) || !Number.isInteger(maxB)) ? (((minB * 10) % 1 !== 0 || (maxB * 10) % 1 !== 0 || span <= 2) ? 0.01 : 0.1) : 1; const v = raw <= minB + st * 0.25 ? minB : (raw >= maxB - st * 0.25 ? maxB : +(Math.round(raw / st) * st).toFixed(2)); budgetInput.value = toLocNum(v); window.CalcUI?.setSliderPct(budgetSlider, v); updateCalc(); });
