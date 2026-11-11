@@ -30,8 +30,10 @@ const RAW_CURR_CATALOG = [
 ];
 
 window.DEFAULT_CAMPAIGN_CURRENCIES = RAW_CURR_CATALOG.map(([code, sym, cc, nameBn, nameEn, rate, minBudget, maxBudget]) => ({
-  code, sym, flag: `https://flagcdn.com/w40/${cc}.png`, nameBn, nameEn, rate, markupPercent: 0, minBudget, maxBudget,
-  minDays: 4, maxDays: 100, unlimitedBudget: false, unlimitedDays: false, forStudio: true, forPublic: true, hasLimit: true, enabled: true
+  code, sym, flag: `https://flagcdn.com/w40/${cc}.png`, nameBn, nameEn, rate, markupPercent: 0,
+  vatPercent: code === 'BDT' ? 15 : 0, minBudget, maxBudget, minDays: 4, maxDays: 100,
+  unlimitedBudget: false, unlimitedDays: false, allowedPlatforms: [], noticeBn: '', noticeEn: '', notice: '', signalType: 'none',
+  noticeEnabled: false, forStudio: true, forPublic: true, hasLimit: true, enabled: true
 }));
 const DEF_BY_CODE = Object.fromEntries(window.DEFAULT_CAMPAIGN_CURRENCIES.map(c => [c.code, c]));
 
@@ -43,8 +45,7 @@ window.getCurrencyFlagHtml = function (c) {
 };
 
 function parseFsVal(v) {
-  if (!v) return null;
-  if ('stringValue' in v) return v.stringValue;
+  if (!v) return null; if ('stringValue' in v) return v.stringValue;
   if ('integerValue' in v || 'doubleValue' in v) return Number(v.integerValue ?? v.doubleValue);
   if ('booleanValue' in v) return Boolean(v.booleanValue);
   if ('arrayValue' in v) return (v.arrayValue.values || []).map(parseFsVal);
@@ -52,8 +53,7 @@ function parseFsVal(v) {
   return null;
 }
 const toFsVal = (v) => typeof v === 'boolean' ? { booleanValue: v } : (typeof v === 'number' && Number.isFinite(v) ? (Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v }) : { stringValue: String(v ?? '') });
-const FS_BASE = 'https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents';
-const STUDIO_BASES = ['https://nl-admin-studio.vercel.app', 'http://localhost:3001'];
+const FS_BASE = 'https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents', STUDIO_BASES = ['https://nl-admin-studio.vercel.app', 'http://localhost:3001'];
 
 window.syncPublicCampaignBrandLogo = async function () {
   try {
