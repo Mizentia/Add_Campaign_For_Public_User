@@ -1,8 +1,9 @@
 .slider-box { padding: 10px 13px; margin-bottom: 9px; gap: 6px; border-radius: 13px; position: relative; }
 .slider-head { gap: 8px; align-items: center; flex-wrap: nowrap; }
-.slider-title-lbl { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 0.94rem; font-weight: 800; color: var(--text-heading); line-height: 1.3; white-space: nowrap; letter-spacing: -0.01em; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); }
-.lbl-ico { font-size: 1rem; line-height: 1; filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.28)); }
-.lbl-chip { display: inline-flex; align-items: center; gap: 5px; padding: 2px 7px; border-radius: 7px; font-size: 0.74rem; font-weight: 800; background: color-mix(in srgb, var(--accent) 13%, var(--bg-input)); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent); box-shadow: 0 2px 6px rgba(99, 102, 241, 0.14); letter-spacing: 0.02em; }
+.slider-title-lbl { display: inline-flex; align-items: center; gap: 6px; min-width: 0; flex: 0 1 auto; overflow: hidden; font-size: 0.94rem; font-weight: 800; color: var(--text-heading); line-height: 1.3; white-space: nowrap; letter-spacing: -0.01em; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); }
+#lblBudgetTxt, [data-i18n="lbl_duration"] { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: clip; }
+.lbl-ico { font-size: 1rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.28)); }
+.lbl-chip { display: inline-flex; align-items: center; gap: 5px; padding: 2px 7px; border-radius: 7px; font-size: 0.74rem; font-weight: 800; background: color-mix(in srgb, var(--accent) 13%, var(--bg-input)); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent); box-shadow: 0 2px 6px rgba(99, 102, 241, 0.14); letter-spacing: 0.02em; flex-shrink: 0; }
 .lbl-chip:has(.chip-sym) { padding: 2px 3px 2px 7px; }
 .chip-code { color: var(--text-heading); font-weight: 800; }
 .chip-sym { display: inline-flex; align-items: center; justify-content: center; padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--hint-color) 18%, var(--bg-input)); color: var(--hint-color); border: 1px solid color-mix(in srgb, var(--hint-color) 40%, transparent); font-size: 0.72rem; font-weight: 800; unicode-bidi: isolate; direction: ltr; }
@@ -31,14 +32,26 @@
 .bill-card { background: var(--bg-box-active); border: 1.5px solid var(--border-focus); border-radius: 14px; padding: 9px 11px; margin-bottom: 11px; display: flex; flex-direction: column; gap: 5px; box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.06); }
 .bill-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 9px; background: var(--bg-input); border: 1px solid var(--border); font-size: 0.82rem; line-height: 1.32; flex-wrap: nowrap; white-space: nowrap; transition: border-color 0.2s ease, transform 0.2s ease; }
 .bill-row:hover { border-color: var(--border-focus); transform: translateX(2px); }
-.bill-lbl { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 600; min-width: 0; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bill-lbl strong { color: var(--text-main); font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+.bill-lbl { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 600; min-width: 0; flex: 0 1 auto; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; }
+.bill-ico { display: inline-flex; align-items: center; flex-shrink: 0; line-height: 1; }
+.bill-txt { color: var(--text-main); font-weight: 700; flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: clip; }
+.is-shrinking { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 10px), transparent 100%); mask-image: linear-gradient(90deg, #000 calc(100% - 10px), transparent 100%); }
 .bill-tag { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 6px; font-size: 0.74rem; font-weight: 800; background: color-mix(in srgb, var(--accent) 15%, var(--bg-input)); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent); letter-spacing: 0.01em; flex-shrink: 0; }
 .bill-formula { display: inline-flex; align-items: center; gap: 5px; padding: 2px 6px 2px 3px; border-radius: 7px; background: var(--bg-pill); border: 1px solid var(--border); font-size: 0.75rem; line-height: 1.2; flex-shrink: 0; }
-.bf-sym, .cp-sym { display: inline-flex; align-items: center; justify-content: center; padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--hint-color) 20%, var(--bg-input)); color: var(--hint-color); border: 1px solid color-mix(in srgb, var(--hint-color) 42%, transparent); font-size: 0.72rem; font-weight: 800; unicode-bidi: isolate; direction: ltr; }
+.bf-daily { display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.bf-sym, .cp-sym { display: inline-flex; align-items: center; justify-content: center; padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--hint-color) 20%, var(--bg-input)); color: var(--hint-color); border: 1px solid color-mix(in srgb, var(--hint-color) 42%, transparent); font-size: 0.72rem; font-weight: 800; unicode-bidi: isolate; direction: ltr; flex-shrink: 0; }
 .bf-num, .cp-num, .bdt-num { color: var(--text-heading); font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
 .bf-mul { color: var(--accent); font-weight: 800; font-size: 0.8rem; padding: 0 1px; }
-.bf-days { display: inline-flex; align-items: center; padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--accent) 13%, var(--bg-input)); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); font-weight: 800; font-size: 0.71rem; }
+.bf-days { display: inline-flex; align-items: center; padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--accent) 13%, var(--bg-input)); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); font-weight: 800; font-size: 0.71rem; flex-shrink: 0; }
+[data-step="1"] .bill-txt, [data-step="2"] .bill-txt, [data-step="3"] .bill-txt { display: none; }
+[data-step="1"] .bill-ico { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+[data-step="2"] .bill-ico, [data-step="3"] .bill-ico { display: none; }
+[data-step="2"] .bill-formula, [data-step="2"] .bf-daily { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+[data-step="3"] .bf-daily { display: none; }
+[data-step="3"] .bill-formula { padding: 0; border: none; background: transparent; flex: 0 1 auto; min-width: 0; overflow: hidden; }
+[data-step="3"] .bf-days, [data-step="3"] .bill-tag { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+[data-step="4"] .bill-lbl { display: none; }
+[data-step="4"] .bill-val, [data-step="4"] .bill-total-val { width: 100%; justify-content: flex-end; }
 .bill-val { display: inline-flex; align-items: center; gap: 5px; font-weight: 800; font-size: 0.84rem; color: var(--text-heading); white-space: nowrap; font-variant-numeric: tabular-nums; margin-left: auto; flex-shrink: 0; }
 .bill-op { color: var(--accent); font-weight: 800; font-size: 0.82rem; padding: 0 1px; }
 .curr-pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 7px 2px 3px; border-radius: 7px; background: color-mix(in srgb, var(--hint-color) 10%, var(--bg-input)); border: 1px solid color-mix(in srgb, var(--hint-color) 35%, transparent); font-size: 0.76rem; font-weight: 800; line-height: 1.2; }
