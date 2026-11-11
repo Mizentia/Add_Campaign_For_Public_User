@@ -1,5 +1,5 @@
 const RAW_CURR_CATALOG = [
-  ['AED','د.إ','ae','সংযুক্ত আরব আমিরাতের দিরহাম','UAE Dirham',34,10,500],['ARS','AR$','ar','আর্জেন্টাইন পেসো','Argentine Peso',0.13,2000,100000],
+  ['AED','د.إ','ae','সংযুক্ত আরব আমিরাতের দিরহাম','UAE Dirham',60,3.7,200],['ARS','AR$','ar','আর্জেন্টাইন পেসো','Argentine Peso',0.13,2000,100000],
   ['AUD','A$','au','অস্ট্রেলিয়ান ডলার','Australian Dollar',82,2,100],['BDT','৳','bd','বাংলাদেশী টাকা','Bangladeshi Taka',1,125,12500],
   ['BOB','Bs.','bo','বলিভিয়ান বলিভিয়ানো','Bolivian Boliviano',18,15,700],['BRL','R$','br','ব্রাজিলিয়ান রিয়েল','Brazilian Real',22,10,500],
   ['CAD','C$','ca','কানাডিয়ান ডলার','Canadian Dollar',92,2,100],['CHF','CHF','ch','সুইশ ফ্রাঙ্ক','Swiss Franc',140,2,100],
@@ -69,7 +69,7 @@ window.fetchStudioCampaignConfig = async function () {
     try { const r = await fetch(url, { cache: 'no-store' }).then(x => x.ok ? x.json() : null); if (r?.settings && (Array.isArray(r.settings.currencies) || Array.isArray(r.settings.platforms))) return r.settings; } catch (_) {}
   }
   try {
-    const fsRes = await fetch(`${FS_BASE}/ecosystem/portalSettings`).then(x => x.ok ? x.json() : null);
+    const fsRes = await fetch(`${FS_BASE}/ecosystem/portalSettings`, { cache: 'no-store' }).then(x => x.ok ? x.json() : null);
     const parsed = parseFsVal(fsRes?.fields?.value); if (parsed?.campaign) return parsed.campaign;
   } catch (_) {}
   return { currencies: window.DEFAULT_CAMPAIGN_CURRENCIES, platforms: window.DEFAULT_CAMPAIGN_PLATFORMS };

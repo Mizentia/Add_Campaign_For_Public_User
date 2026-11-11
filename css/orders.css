@@ -23,7 +23,9 @@
 .orders-count-badge.hidden { display: none; }
 .orders-count-badge.badge-pop { animation: badgeBouncePop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1); background: linear-gradient(135deg, var(--success), var(--accent)); }
 .btn-menu-trigger.menu-glow-active { border-color: var(--accent); box-shadow: var(--shadow-focus); transform: scale(1.08); }
-#viewOrdersBtn.order-btn-celebrate { animation: orderBtnWiggle 0.95s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; background: var(--bg-pill-hover); border-color: var(--success); box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 28%, transparent), var(--shadow-focus); }
+#viewOrdersBtn.order-btn-celebrate { animation: orderBtnWiggle 0.95s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; background: var(--bg-pill-hover); border-color: var(--success); box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 28%, transparent), var(--shadow-focus); width: auto !important; padding: 6px 10px !important; gap: 5px !important; }
+#viewOrdersBtn.order-btn-celebrate .btn-lbl, #viewOrdersBtn.order-btn-celebrate .ord-lbl-pre, #viewOrdersBtn.order-btn-celebrate .ord-lbl-main { display: inline !important; }
+#viewOrdersBtn.order-btn-celebrate .orders-count-badge { display: inline-flex !important; }
 .order-confirm-float { position: fixed; top: 76px; left: 50%; transform: translateX(-50%) translateY(0) scale(1); z-index: 180; background: var(--bg-modal); color: var(--text-heading); border: 1.5px solid var(--success); border-radius: 14px; padding: 11px 16px; box-shadow: var(--shadow-card), 0 0 24px color-mix(in srgb, var(--success) 32%, transparent); display: flex; align-items: center; gap: 10px; pointer-events: none; transition: all 0.38s cubic-bezier(0.22, 1, 0.36, 1); }
 .order-confirm-float.hidden { opacity: 0; transform: translateX(-50%) translateY(-22px) scale(0.88); }
 .order-confirm-float.fly-to-menu { opacity: 0; transform: translateX(15vw) translateY(-48px) scale(0.72); }

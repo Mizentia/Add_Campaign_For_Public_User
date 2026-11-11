@@ -11,7 +11,7 @@ body { background-color: var(--bg-primary); background-image: var(--bg-gradient)
 .menu-wrap { position: relative; display: flex; align-items: center; flex-shrink: 0; }
 .btn-menu-trigger { width: 38px; height: 38px; border-radius: 10px; background: var(--bg-pill); border: 1px solid var(--border); color: var(--text-main); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); position: relative; z-index: 5; }
 .btn-menu-trigger:hover, .btn-menu-trigger:focus-visible { background: var(--bg-pill-hover); border-color: var(--accent); box-shadow: var(--shadow-focus); transform: scale(1.06); }
-.header-slide-actions { position: absolute; right: calc(100% + 8px); top: 50%; transform: translateY(-50%) translateX(0) scale(1); transform-origin: right center; display: flex; flex-direction: row; align-items: center; gap: 6px; padding: 6px 8px; background: var(--bg-modal); border: 1px solid var(--border-focus); border-radius: 13px; box-shadow: var(--shadow-card); z-index: 10; opacity: 1; pointer-events: auto; transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+.header-slide-actions { position: absolute; right: calc(100% + 8px); top: 50%; transform: translateY(-50%) translateX(0) scale(1); transform-origin: right center; display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 6px; padding: 6px 8px; background: var(--bg-modal); border: 1px solid var(--border-focus); border-radius: 13px; box-shadow: var(--shadow-card); z-index: 10; opacity: 1; pointer-events: auto; transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
 .header-slide-actions.hidden { opacity: 0; pointer-events: none; transform: translateY(-50%) translateX(18px) scale(0.92); }
 .btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 5px; background: var(--bg-pill); border: 1px solid var(--border); color: var(--text-main); padding: 7px 11px; border-radius: 9px; cursor: pointer; white-space: nowrap; font-size: 0.78rem; font-weight: 700; transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1); flex-shrink: 0; }
 .btn-ghost:hover { background: var(--bg-pill-hover); border-color: var(--accent); box-shadow: var(--shadow-focus); transform: translateY(-2px); }
@@ -83,17 +83,18 @@ body { background-color: var(--bg-primary); background-image: var(--bg-gradient)
   .btn-menu-trigger { width: 34px; height: 34px; border-radius: 8px; }
   .header-slide-actions { gap: 4px; padding: 4px 5px; right: calc(100% + 6px); }
   .btn-ghost { padding: 6px 8px; font-size: 0.72rem; border-radius: 7px; }
+  #viewOrdersBtn .ord-lbl-pre { display: none; }
   .platform-grid { grid-template-columns: repeat(12, 1fr); gap: 6px; margin-bottom: 10px; }
   .plat-btn:nth-child(-n+3) { grid-column: span 4; } .plat-btn:nth-child(n+4) { grid-column: span 3; }
 }
 @media (max-width: 640px) {
   body { padding: 8px 6px; } .card { padding: 12px 10px; border-radius: 14px; }
-  .header-slide-actions { top: calc(100% + 8px); right: 0; transform: translateY(0) scale(1); transform-origin: top right; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100vw - 24px); }
-  .header-slide-actions.hidden { transform: translateY(-8px) scale(0.94); }
+  .btn-ghost:not(#viewOrdersBtn) .btn-lbl { display: none; } .btn-ghost:not(#viewOrdersBtn) { width: 32px; height: 32px; padding: 0; }
   .plat-btn { padding: 7px 4px; gap: 5px; font-size: 0.72rem; border-radius: 9px; }
   .curr-btn { padding: 6px 8px; font-size: 0.69rem; gap: 4px; border-radius: 8px; }
-  .curr-btn.active { padding: 6px 10px; } .curr-full { font-size: 0.69rem; }
+  .curr-btn.active { padding: 6px 10px; } .curr-full { font-size: 0.69rem; } .flag-svg { width: 15px; height: 10px; }
   .curr-drop-btn { width: 30px; height: 29px; border-radius: 8px; } .curr-drop-menu { padding: 7px; gap: 5px; }
-  .flag-svg { width: 15px; height: 10px; }
   .slider-box { padding: 11px 12px; margin-bottom: 10px; } .slider-head label { font-size: 0.84rem; } .input-num { width: 74px; font-size: 0.95rem; }
 }
+@media (max-width: 480px) { #viewOrdersBtn .btn-lbl { display: none; } #viewOrdersBtn { padding: 0 7px; height: 32px; gap: 3px; } .orders-count-badge { margin-left: 1px; min-width: 19px; height: 18px; padding: 0 5px; font-size: 0.66rem; } }
+@media (max-width: 290px) { #viewOrdersBtn .orders-count-badge { display: none; } #viewOrdersBtn { width: 32px; padding: 0; } }

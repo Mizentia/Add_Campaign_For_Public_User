@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
   let currentLang = localStorage.getItem('nl_camp_lang') || 'bn', currentTheme = localStorage.getItem('nl_camp_theme') || 'light', menuDismissed = false;
+  const normCurr = (c) => ({ ...c, rate: Number(c.rate) || 1, markupPercent: Number(c.markupPercent) || 0, minBudget: Number(c.minBudget) || 1, maxBudget: Number(c.maxBudget) || 100, minDays: Math.max(1, Math.round(Number(c.minDays) || 4)), maxDays: Math.max(1, Math.round(Number(c.maxDays) || 100)) });
   let platforms = (window.DEFAULT_CAMPAIGN_PLATFORMS || []).filter(p => p.enabled !== false && p.forPublic !== false), activePlat = platforms[0];
-  let currencies = (window.DEFAULT_CAMPAIGN_CURRENCIES || []).filter(c => c.enabled !== false && c.forPublic !== false), activeCurr = currencies[0];
+  let currencies = (window.DEFAULT_CAMPAIGN_CURRENCIES || []).filter(c => c.enabled !== false && c.forPublic !== false).map(normCurr), activeCurr = currencies[0];
   const supportInfo = { phone: '8801703582125', fb: 'https://www.facebook.com/NokshaLab/', email: 'NokshaLab@gmail.com' };
   const toEnNum = (s) => String(s ?? '').replace(/[০-৯]/g, d => bnDigits.indexOf(d)), toLocNum = (s, lang = currentLang) => lang === 'bn' ? String(s).replace(/[0-9]/g, d => bnDigits[d]) : toEnNum(s);
   const tr = (key) => (window.CAMPAIGN_I18N?.[currentLang]?.[key]) || key, bound = (n, min, max, hasLim) => Math.max(min, hasLim !== false ? Math.min(max, n) : n);
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     platGrid.innerHTML = platforms.map(p => `<button type="button" class="plat-btn ${p.id === activePlat?.id ? 'active' : ''}" data-plat="${p.id}">${getPlatLogo(p)}<span>${getPlatName(p)}</span></button>`).join('');
     platGrid.querySelectorAll('.plat-btn').forEach(btn => btn.addEventListener('click', () => { const found = platforms.find(x => x.id === btn.dataset.plat); if (!found) return; activePlat = found; savePref('nl_camp_plat', activePlat.id); renderPlatforms(); updateCalc(); }));
   };
-  const restoreCurrState = (list) => { try { const ord = JSON.parse(localStorage.getItem('nl_camp_curr_order') || '[]'); if (ord.length) list.sort((a, b) => (ord.indexOf(a.code) < 0 ? 999 : ord.indexOf(a.code)) - (ord.indexOf(b.code) < 0 ? 999 : ord.indexOf(b.code))); } catch (_) {} currencies = list; const savedCode = localStorage.getItem('nl_camp_curr'); activeCurr = currencies.find(c => c.code === savedCode) || currencies[0]; };
+  const restoreCurrState = (list) => { const normed = list.map(normCurr); try { const ord = JSON.parse(localStorage.getItem('nl_camp_curr_order') || '[]'); if (ord.length) normed.sort((a, b) => (ord.indexOf(a.code) < 0 ? 999 : ord.indexOf(a.code)) - (ord.indexOf(b.code) < 0 ? 999 : ord.indexOf(b.code))); } catch (_) {} currencies = normed; const savedCode = localStorage.getItem('nl_camp_curr'); activeCurr = currencies.find(c => c.code === savedCode) || currencies[0]; };
   const syncDropdown = () => {
     if (!currRow || !currDropMenu) return; currDropBtn?.classList.remove('hidden'); const r = currRow.getBoundingClientRect(), overflow = [];
     currRow.querySelectorAll('.curr-btn').forEach(btn => { const b = btn.getBoundingClientRect(); if (b.left < r.left - 2 || b.right > r.right + 2) { const c = currencies.find(x => x.code === btn.dataset.curr); if (c) overflow.push(c); } });
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   menuToggleBtn?.addEventListener('click', (e) => { e.stopPropagation(); menuDropdown?.classList.toggle('hidden'); closeCurrDrop(); });
   currDropBtn?.addEventListener('click', (e) => { e.stopPropagation(); syncDropdown(); const isHid = currDropMenu?.classList.toggle('hidden'); currDropBtn.classList.toggle('open', !isHid); menuDropdown?.classList.add('hidden'); if (!isHid) setTimeout(() => document.getElementById('currSearchInp')?.focus(), 40); });
   currRow?.addEventListener('scroll', syncDropdown, { passive: true }); window.addEventListener('resize', syncDropdown);
-  const blurOutsideInputs = (t) => { [budgetInput, durationInput].forEach(el => { if (el && t !== el && document.activeElement === el) el.blur(); }); };
+  const blurOutsideInputs = (t) => { [budgetInput, durationInput].forEach(el => { if (el && t !== el && !el.closest('.input-unit-wrap')?.contains(t)) { el.readOnly = true; if (document.activeElement === el) el.blur(); } }); };
   document.addEventListener('touchstart', (e) => blurOutsideInputs(e.target), { capture: true, passive: true });
   document.addEventListener('pointerdown', (e) => {
     blurOutsideInputs(e.target);
@@ -49,9 +50,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeCurrDrop(); menuDropdown?.classList.add('hidden'); if (!modal?.classList.contains('hidden')) closeModal(); document.getElementById('gateCancelBtn')?.click(); } });
   const selectCurrency = (code, fromDrop = false) => {
     const idx = currencies.findIndex(c => c.code === code); if (idx === -1) return;
-    const next = currencies[idx], prevBdt = (parseFloat(toEnNum(budgetInput.value).replace(/[^0-9.]/g, '')) || activeCurr.minBudget) * activeCurr.rate, changed = next.code !== activeCurr.code;
+    const next = currencies[idx], changed = next.code !== activeCurr.code;
     if (fromDrop) { currencies = [next, ...currencies.filter(c => c.code !== code)]; savePref('nl_camp_curr_order', JSON.stringify(currencies.map(c => c.code))); }
-    activeCurr = next; savePref('nl_camp_curr', activeCurr.code); closeCurrDrop(); renderCurrencies(fromDrop); if (changed) syncSliderBounds(Math.round(prevBdt / activeCurr.rate));
+    activeCurr = next; savePref('nl_camp_curr', activeCurr.code); closeCurrDrop(); renderCurrencies(fromDrop); if (changed) syncSliderBounds(activeCurr.minBudget, activeCurr.minDays);
   };
   const renderCurrencies = (resetScroll = false) => {
     if (!currRow) return; currRow.innerHTML = currencies.map(c => `<button type="button" class="curr-btn ${c.code === activeCurr.code ? 'active' : ''}" data-curr="${c.code}">${getFlag(c)}<span class="curr-sym">${c.sym}</span><span class="curr-code">${c.code}</span><span class="curr-full">• ${getName(c)}</span></button>`).join('');
@@ -60,24 +61,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (actBtn && !resetScroll) { const r = currRow.getBoundingClientRect(), b = actBtn.getBoundingClientRect(); if (b.right > r.right + 2 || b.left < r.left - 2) { currencies = [activeCurr, ...currencies.filter(c => c.code !== activeCurr.code)]; savePref('nl_camp_curr_order', JSON.stringify(currencies.map(c => c.code))); return renderCurrencies(true); } }
     syncDropdown();
   };
-  const syncSliderBounds = (suggestedBudget) => {
-    const bVal = +bound(suggestedBudget ?? (parseFloat(toEnNum(budgetInput.value).replace(/[^0-9.]/g, '')) || activeCurr.minBudget), activeCurr.minBudget, activeCurr.maxBudget, hasBdtLim(activeCurr)).toFixed(2), dVal = Math.round(bound(parseInt(toEnNum(durationInput.value).replace(/[^0-9]/g, ''), 10) || activeCurr.minDays, activeCurr.minDays, activeCurr.maxDays, hasDayLim(activeCurr)));
-    budgetSlider.min = activeCurr.minBudget; budgetSlider.max = activeCurr.maxBudget; budgetSlider.step = '1'; budgetSlider.dataset.step = '1'; durationSlider.min = activeCurr.minDays; durationSlider.max = activeCurr.maxDays; durationSlider.step = '1'; durationSlider.dataset.step = '1';
+  const syncSliderBounds = (suggestedBudget, suggestedDays) => {
+    const bVal = +bound(suggestedBudget ?? activeCurr.minBudget, activeCurr.minBudget, activeCurr.maxBudget, hasBdtLim(activeCurr)).toFixed(2), dVal = Math.round(bound(suggestedDays ?? (parseInt(toEnNum(durationInput.value).replace(/[^0-9]/g, ''), 10) || activeCurr.minDays), activeCurr.minDays, activeCurr.maxDays, hasDayLim(activeCurr)));
+    budgetSlider.min = activeCurr.minBudget; budgetSlider.max = activeCurr.maxBudget; budgetSlider.step = 'any'; durationSlider.min = activeCurr.minDays; durationSlider.max = activeCurr.maxDays; durationSlider.step = '1'; durationSlider.dataset.step = '1';
     budgetInput.value = toLocNum(bVal); durationInput.value = toLocNum(dVal); budgetWarn?.classList.remove('show'); durationWarn?.classList.remove('show');
     window.CalcUI?.animateSlider(budgetSlider, Math.min(activeCurr.maxBudget, bVal)); window.CalcUI?.animateSlider(durationSlider, Math.min(activeCurr.maxDays, dVal)); updateCalc();
   };
   const computeTotals = () => {
-    const bLim = hasBdtLim(activeCurr), dLim = hasDayLim(activeCurr), rawB = toEnNum(budgetInput.value).replace(/।/g, '.').replace(/[^0-9.]/g, ''), dailyVal = +bound(parseFloat(rawB) || activeCurr.minBudget, activeCurr.minBudget, activeCurr.maxBudget, bLim).toFixed(2);
-    const [iP, dP = ''] = rawB.split('.'), dailyDisp = (parseFloat(rawB) === dailyVal && rawB.includes('.') && dP.length) ? `${Number(iP)}.${dP.slice(0, 2)}` : String(dailyVal), days = Math.round(bound(parseInt(toEnNum(durationInput.value).replace(/[^0-9]/g, ''), 10) || activeCurr.minDays, activeCurr.minDays, activeCurr.maxDays, dLim));
+    const bLim = hasBdtLim(activeCurr), dLim = hasDayLim(activeCurr), rawB = toEnNum(budgetInput.value).replace(/।/g, '.').replace(/[^0-9.]/g, ''), parsedB = parseFloat(rawB);
+    const dailyVal = +bound(Number.isFinite(parsedB) && parsedB > 0 ? parsedB : activeCurr.minBudget, activeCurr.minBudget, activeCurr.maxBudget, bLim).toFixed(2);
+    const [iP, dP = ''] = rawB.split('.'), dailyDisp = (parsedB === dailyVal && rawB.includes('.') && dP.length) ? `${Number(iP)}.${dP.slice(0, 2)}` : String(dailyVal), days = Math.round(bound(parseInt(toEnNum(durationInput.value).replace(/[^0-9]/g, ''), 10) || activeCurr.minDays, activeCurr.minDays, activeCurr.maxDays, dLim));
     const totalCurr = +(dailyVal * days).toFixed(2), baseBdt = +(totalCurr * activeCurr.rate).toFixed(2), vatPct = Number(activePlat?.vatPercent) || 0, markupPct = Number(activeCurr?.markupPercent) || 0, vatBdt = +(baseBdt * (vatPct / 100)).toFixed(2), markupBdt = +(baseBdt * (markupPct / 100)).toFixed(2);
     return { dailyVal, dailyDisp, days, totalCurr, baseBdt, vatPct, markupPct, vatBdt, markupBdt, totalBdtNum: +(baseBdt + vatBdt + markupBdt).toFixed(2), bLim, dLim };
   };
   const updateCalc = () => {
-    const { code, sym } = activeCurr, totals = computeTotals(); savePref('nl_camp_budget', String(totals.dailyVal)); savePref('nl_camp_days', String(totals.days));
-    document.getElementById('budgetUnitPrefix').textContent = sym; document.getElementById('lblBudgetTitle').textContent = `${tr('lbl_budget_prefix')} (${code} ${sym})`;
+    const { code, sym } = activeCurr, totals = computeTotals(), bTxt = document.getElementById('lblBudgetTxt'), bChip = document.getElementById('lblBudgetChip');
+    document.getElementById('budgetUnitPrefix').textContent = sym; if (bTxt) bTxt.textContent = tr('lbl_budget_prefix'); if (bChip) bChip.textContent = `${code} ${sym}`;
     window.CalcUI?.renderCalcUI({ activeCurr, activePlat, totals, tr, toLocNum, getPlatName, isBn: currentLang === 'bn' });
   };
-  budgetSlider?.addEventListener('input', () => { blurOutsideInputs(budgetSlider); budgetWarn?.classList.remove('show'); const v = Math.round(Number(budgetSlider.value)); budgetInput.value = toLocNum(v); window.CalcUI?.setSliderPct(budgetSlider, v); updateCalc(); });
+  budgetSlider?.addEventListener('input', () => { blurOutsideInputs(budgetSlider); budgetWarn?.classList.remove('show'); const raw = Number(budgetSlider.value), minB = activeCurr.minBudget, maxB = activeCurr.maxBudget, span = maxB - minB, st = (span <= 20 || !Number.isInteger(minB) || !Number.isInteger(maxB)) ? (((minB * 10) % 1 !== 0 || (maxB * 10) % 1 !== 0 || span <= 2) ? 0.01 : 0.1) : 1; const v = raw <= minB + st * 0.25 ? minB : (raw >= maxB - st * 0.25 ? maxB : +(Math.round(raw / st) * st).toFixed(2)); budgetInput.value = toLocNum(v); window.CalcUI?.setSliderPct(budgetSlider, v); updateCalc(); });
   durationSlider?.addEventListener('input', () => { blurOutsideInputs(durationSlider); durationWarn?.classList.remove('show'); const v = Math.round(Number(durationSlider.value)); durationInput.value = toLocNum(v); window.CalcUI?.setSliderPct(durationSlider, v); updateCalc(); });
   window.CalcUI?.bindValidatedInput(budgetInput, budgetSlider, budgetWarn, () => ({ min: activeCurr.minBudget, max: activeCurr.maxBudget, hasLim: hasBdtLim(activeCurr), allowDec: true, sym: activeCurr.sym, tr, toLocNum, toEnNum }), updateCalc);
   window.CalcUI?.bindValidatedInput(durationInput, durationSlider, durationWarn, () => ({ min: activeCurr.minDays, max: activeCurr.maxDays, hasLim: hasDayLim(activeCurr), allowDec: false, unit: tr('lbl_days'), tr, toLocNum, toEnNum }), updateCalc);
@@ -87,13 +89,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('langToggleBtn')?.addEventListener('click', () => { applyLanguage(currentLang === 'bn' ? 'en' : 'bn'); menuDropdown?.classList.add('hidden'); });
   const showModal = (title, html) => { modalTitle.textContent = title; modalBody.innerHTML = html; modal.classList.remove('hidden'); menuDropdown?.classList.add('hidden'); closeCurrDrop(); };
   document.getElementById('closeModalBtn')?.addEventListener('click', closeModal); modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  document.getElementById('editProfileBtn')?.addEventListener('click', () => { menuDropdown?.classList.add('hidden'); window.CampaignOrders?.openProfileEdit?.(); });
   document.getElementById('aboutHelpBtn')?.addEventListener('click', () => { window.CampaignOrders?.markModalClosed?.(); const cleanTel = toEnNum(supportInfo.phone).replace(/[^0-9]/g, ''); showModal(tr('about_title'), `<p style="color:var(--text-muted);margin-bottom:12px;line-height:1.5;">${tr('about_desc')}</p><div class="order-pill"><strong>${tr('about_helpline')}</strong><div class="help-row-wrap"><a class="help-link" href="tel:+${cleanTel}">${toLocNum(supportInfo.phone)}</a><a class="help-wa-chip" href="https://wa.me/${cleanTel}" target="_blank" rel="noopener">💬 WhatsApp</a></div></div><div class="order-pill"><strong>${tr('about_fb')}</strong><div style="margin-top:5px;"><a class="help-link" href="${supportInfo.fb}" target="_blank" rel="noopener">${supportInfo.fb}</a></div></div><div class="order-pill"><strong>${tr('about_email')}</strong><div style="margin-top:5px;"><a class="help-link" href="mailto:${supportInfo.email}">${supportInfo.email}</a></div></div><p style="font-size:0.8rem;color:var(--hint-color);text-align:center;margin-top:10px;font-weight:700;">${toLocNum(tr('about_hours'))}</p>`); });
-  form.addEventListener('submit', async (e) => { e.preventDefault(); budgetInput?.blur(); durationInput?.blur(); const { dailyVal, days, totalCurr, baseBdt, vatPct, markupPct, totalBdtNum } = computeTotals(), usdRate = Number(currencies.find(c => c.code === 'USD')?.rate) || 125, pageOrPostUrl = document.getElementById('pageOrPostUrl')?.value || ''; await window.CampaignOrders?.submitInstantOrder({ platform: activePlat?.id || 'Facebook', activePlat, activeCurr, dailyVal, days, totalCurr, baseBdt, vatPct, markupPct, totalBdtNum, totalUsd: +(activeCurr.code === 'USD' ? totalCurr : (baseBdt / usdRate)).toFixed(2), pageOrPostUrl }); });
+  form.addEventListener('submit', async (e) => { e.preventDefault(); budgetInput?.blur(); durationInput?.blur(); const { dailyVal, days, totalCurr, baseBdt, vatPct, markupPct, totalBdtNum } = computeTotals(), usdRate = Number(currencies.find(c => c.code === 'USD')?.rate) || 125; await window.CampaignOrders?.submitInstantOrder({ platform: activePlat?.id || 'Facebook', activePlat, activeCurr, dailyVal, days, totalCurr, baseBdt, vatPct, markupPct, totalBdtNum, totalUsd: +(activeCurr.code === 'USD' ? totalCurr : (baseBdt / usdRate)).toFixed(2) }); });
   document.getElementById('viewOrdersBtn')?.addEventListener('click', () => window.CampaignOrders?.openOrdersModal());
-  const savedB = parseFloat(localStorage.getItem('nl_camp_budget')), savedD = parseInt(localStorage.getItem('nl_camp_days'), 10); if (savedD) durationInput.value = toLocNum(savedD);
-  restorePlatState(platforms); restoreCurrState(currencies); applyLanguage(currentLang); syncSliderBounds(savedB || undefined); window.CampaignOrders?.init({ tr, toLocNum, toEnNum, showModal, getLang: () => currentLang });
+  restorePlatState(platforms); restoreCurrState(currencies); applyLanguage(currentLang); syncSliderBounds(activeCurr.minBudget, activeCurr.minDays); window.CampaignOrders?.init({ tr, toLocNum, toEnNum, showModal, getLang: () => currentLang });
   const remoteCfg = await window.fetchStudioCampaignConfig(), activePlats = window.normalizeCampaignPlatforms(remoteCfg?.platforms).filter(p => p && p.id && p.enabled !== false && p.forPublic !== false), activeList = (Array.isArray(remoteCfg?.currencies) ? remoteCfg.currencies : []).filter(c => c && c.code && c.enabled !== false && c.forPublic !== false);
   if (activePlats.length) { restorePlatState(activePlats); renderPlatforms(); }
-  if (activeList.length) { restoreCurrState(activeList); renderCurrencies(); syncSliderBounds(parseFloat(localStorage.getItem('nl_camp_budget')) || undefined); } else updateCalc();
+  if (activeList.length) { restoreCurrState(activeList); renderCurrencies(); syncSliderBounds(activeCurr.minBudget, activeCurr.minDays); } else updateCalc();
 });
