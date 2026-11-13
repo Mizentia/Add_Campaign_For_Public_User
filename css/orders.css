@@ -51,10 +51,10 @@
 .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; box-shadow: 0 0 8px var(--success); animation: livePulse 1.8s infinite ease-in-out; }
 .order-pill.is-deleted { border-color: color-mix(in srgb, var(--danger) 45%, transparent); background: color-mix(in srgb, var(--danger) 7%, var(--bg-pill)); }
 .order-head-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
-.order-meta-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.76rem; color: var(--text-muted); margin-top: 5px; flex-wrap: wrap; }
-.order-status-desc { margin-top: 6px; padding: 6px 9px; border-radius: 8px; background: var(--bg-input); font-size: 0.76rem; color: var(--text-main); border-left: 3px solid var(--accent); }
+.order-meta-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 600; line-height: 1.45; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; color: var(--text-muted); margin-top: 5px; flex-wrap: wrap; }
+.order-status-desc { margin-top: 6px; padding: 6px 9px; border-radius: 8px; background: var(--bg-input); font-size: 0.77rem; font-weight: 500; line-height: 1.45; color: var(--text-main); border-left: 3px solid var(--accent); }
 .order-pill.is-deleted .order-status-desc { border-left-color: var(--danger); color: var(--danger); font-weight: 700; }
-.order-admin-note { margin-top: 6px; padding: 6px 9px; border-radius: 8px; background: var(--bg-box-active); border: 1px solid var(--border-focus); font-size: 0.76rem; color: var(--text-heading); }
+.order-admin-note { margin-top: 6px; padding: 6px 9px; border-radius: 8px; background: var(--bg-box-active); border: 1px solid var(--border-focus); font-size: 0.77rem; font-weight: 500; line-height: 1.45; color: var(--text-heading); }
 .status-badge.pending { background: color-mix(in srgb, var(--warning) 18%, transparent); color: var(--warning); }
 .status-badge.approved { background: color-mix(in srgb, var(--info) 18%, transparent); color: var(--info); }
 .status-badge.running { background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent); }
