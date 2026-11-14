@@ -12,11 +12,11 @@
 .gate-actions .btn-confirm-no { height: 48px; padding: 0 16px; border-radius: 12px; font-size: 0.88rem; }
 .gate-actions .btn-confirm-no.hidden { display: none; }
 .orders-toolbar-btns { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.btn-edit-profile { display: inline-flex; align-items: center; gap: 4px; padding: 7px 11px; border-radius: 9px; background: color-mix(in srgb, var(--accent) 12%, var(--bg-pill)); border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent); color: var(--accent); font-size: 0.75rem; font-weight: 800; cursor: pointer; white-space: nowrap; transition: all 0.22s ease; }
+.btn-edit-profile { display: inline-flex; align-items: center; gap: 4px; padding: 7px 11px; border-radius: 9px; background: color-mix(in srgb, var(--accent) 12%, var(--bg-pill)); border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent); color: var(--accent); font-size: 0.75rem; font-weight: 800; cursor: pointer; white-space: nowrap; transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease; }
 .btn-edit-profile:hover { background: var(--accent); color: #ffffff; transform: translateY(-1px); }
 .order-id-wrap { display: inline-flex; align-items: center; gap: 6px; }
 .order-calc-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 5px 0; }
-.btn-copy-id { padding: 2px 7px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-input); color: var(--text-muted); font-size: 0.68rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+.btn-copy-id { padding: 2px 7px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-input); color: var(--text-muted); font-size: 0.68rem; font-weight: 700; cursor: pointer; transition: border-color 0.18s ease, color 0.18s ease; }
 .btn-copy-id:hover { border-color: var(--accent); color: var(--accent); }
 .order-link-row { margin-top: 4px; font-size: 0.75rem; color: var(--text-muted); word-break: break-all; }
 #viewOrdersBtn { position: relative; overflow: visible; border-color: color-mix(in srgb, var(--accent) 42%, var(--border)); }
@@ -27,7 +27,7 @@
 #viewOrdersBtn.order-btn-celebrate { animation: orderBtnWiggle 0.95s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; background: var(--bg-pill-hover); border-color: var(--success); box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 28%, transparent), var(--shadow-focus); width: auto !important; padding: 6px 10px !important; gap: 5px !important; }
 #viewOrdersBtn.order-btn-celebrate .btn-lbl, #viewOrdersBtn.order-btn-celebrate .ord-lbl-pre, #viewOrdersBtn.order-btn-celebrate .ord-lbl-main { display: inline !important; }
 #viewOrdersBtn.order-btn-celebrate .orders-count-badge { display: inline-flex !important; }
-.order-confirm-float { position: fixed; top: 76px; left: 50%; transform: translateX(-50%) translateY(0) scale(1); z-index: 180; background: var(--bg-modal); color: var(--text-heading); border: 1.5px solid var(--success); border-radius: 14px; padding: 11px 16px; box-shadow: var(--shadow-card), 0 0 24px color-mix(in srgb, var(--success) 32%, transparent); display: flex; align-items: center; gap: 10px; pointer-events: none; transition: all 0.38s cubic-bezier(0.22, 1, 0.36, 1); }
+.order-confirm-float { position: fixed; top: 76px; left: 50%; transform: translateX(-50%) translateY(0) scale(1); z-index: 180; background: var(--bg-modal); color: var(--text-heading); border: 1.5px solid var(--success); border-radius: 14px; padding: 11px 16px; box-shadow: var(--shadow-card), 0 0 24px color-mix(in srgb, var(--success) 32%, transparent); display: flex; align-items: center; gap: 10px; pointer-events: none; transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease; }
 .order-confirm-float.hidden { opacity: 0; transform: translateX(-50%) translateY(-22px) scale(0.88); }
 .order-confirm-float.fly-to-menu { opacity: 0; transform: translateX(15vw) translateY(-48px) scale(0.72); }
 .confirm-float-ico { width: 32px; height: 32px; border-radius: 50%; background: color-mix(in srgb, var(--success) 18%, transparent); color: var(--success); display: inline-flex; align-items: center; justify-content: center; font-size: 1.05rem; flex-shrink: 0; animation: popIn 0.3s ease; }
@@ -37,7 +37,7 @@
 .btn-submit.is-cooldown span { position: relative; z-index: 2; }
 .orders-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
 .orders-hint-bar { flex: 1 1 200px; display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 10px; background: var(--bg-box-active); border: 1px dashed var(--border-focus); color: var(--text-muted); font-size: 0.74rem; line-height: 1.35; }
-.btn-clear-local { display: inline-flex; align-items: center; gap: 5px; padding: 7px 11px; border-radius: 9px; background: color-mix(in srgb, var(--danger) 12%, var(--bg-pill)); border: 1px solid color-mix(in srgb, var(--danger) 42%, transparent); color: var(--danger); font-size: 0.75rem; font-weight: 800; cursor: pointer; white-space: nowrap; transition: all 0.22s ease; }
+.btn-clear-local { display: inline-flex; align-items: center; gap: 5px; padding: 7px 11px; border-radius: 9px; background: color-mix(in srgb, var(--danger) 12%, var(--bg-pill)); border: 1px solid color-mix(in srgb, var(--danger) 42%, transparent); color: var(--danger); font-size: 0.75rem; font-weight: 800; cursor: pointer; white-space: nowrap; transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease; }
 .btn-clear-local:hover { background: var(--danger); color: #ffffff; transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--danger) 35%, transparent); }
 .clear-confirm-box { background: color-mix(in srgb, var(--danger) 8%, var(--bg-pill)); border: 1.5px solid color-mix(in srgb, var(--danger) 50%, transparent); border-radius: 13px; padding: 13px 14px; margin-bottom: 12px; animation: popIn 0.24s cubic-bezier(0.22, 1, 0.36, 1); }
 .clear-confirm-title { font-size: 0.9rem; font-weight: 800; color: var(--danger); margin-bottom: 5px; }
