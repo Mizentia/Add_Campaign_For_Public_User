@@ -77,9 +77,12 @@
     const id = 'PUB-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 5).toUpperCase();
     const payload = { id, visitorId: visitor.visitorId, customerName: visitor.name, customerPhone: visitor.phone || '', platform, currency: activeCurr.code, currencySymbol: activeCurr.sym, rate: activeCurr.rate, markupPercent: markupPct || 0, vatPercent: vatPct || 0, dailyBudget: dailyVal, totalAmount: totalCurr, baseBDT: baseBdt || totalBdtNum, totalBDT: totalBdtNum, budgetUSD: totalUsd, durationDays: days, pageOrPostUrl: cleanLink, status: 'pending', createdAt: new Date().toISOString(), lang: ctxRef?.getLang?.() || 'bn', source: 'public_portal', notes: `Currency: ${activeCurr.code} (${activeCurr.sym}${dailyVal}/day x ${days} days = ${activeCurr.sym}${totalCurr} | VAT: ${vatPct || 0}% | Markup: ${markupPct || 0}%)${cleanLink ? ' | Link/Note: ' + cleanLink : ''}` };
     await new Promise(r => setTimeout(r, 480));
+    const resetBtn = () => { if (btn) { btn.disabled = false; btn.classList.remove('is-loading'); btn.textContent = window.CalcUI?.getReadySubmitLabel?.() || ctxRef.tr('btn_submit'); } };
+    if (!navigator.onLine) { submitting = false; resetBtn(); return window.OrderAnim?.showFloatingToast(ctxRef.tr('toast_offline_title'), ctxRef.tr('toast_offline_sub'), 2600, true); }
     const res = await fetch('./api/submit-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(async r => ({ status: r.status, body: await r.json().catch(() => ({})) })).catch(() => null);
     submitting = false; if (res?.status === 429) { window.OrderAnim?.markCooldownStart(res.body?.cooldownRemaining || 60); return; }
-    if (!res?.body?.success) await window.cloudSubmitOrder?.(payload);
+    const ok = Boolean(res?.body?.success) || Boolean(await window.cloudSubmitOrder?.(payload));
+    if (!ok) { resetBtn(); return window.OrderAnim?.showFloatingToast(ctxRef.tr('toast_offline_title'), ctxRef.tr('toast_offline_sub'), 2600, true); }
     const linkInp = document.getElementById('pageOrPostUrl'); if (linkInp) linkInp.value = '';
     const localList = getOrders(), prevCount = localList.length; localList.unshift(payload); saveOrders(localList, true);
     window.OrderAnim?.markCooldownStart(60); window.OrderAnim?.playOrderSuccessSequence(id, prevCount, localList.length); syncOrderStatuses();

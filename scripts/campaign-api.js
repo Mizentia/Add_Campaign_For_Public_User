@@ -23,6 +23,7 @@ function getClientKey(req, visitorId) {
 function checkRateLimit(req, visitorId) {
   const now = Date.now(), ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'ip';
   for (const [k, ts] of rateLimitMap.entries()) { if (now - ts > COOLDOWN_MS) rateLimitMap.delete(k); }
+  if (rateLimitMap.size > 5000) rateLimitMap.clear();
   const lastTs = Math.max(rateLimitMap.get(ip) || 0, visitorId ? (rateLimitMap.get(visitorId) || 0) : 0);
   if (now - lastTs < COOLDOWN_MS) return Math.ceil((COOLDOWN_MS - (now - lastTs)) / 1000);
   rateLimitMap.set(ip, now);

@@ -37,11 +37,12 @@ window.DEFAULT_CAMPAIGN_CURRENCIES = RAW_CURR_CATALOG.map(([code, sym, cc, nameB
 }));
 const DEF_BY_CODE = Object.fromEntries(window.DEFAULT_CAMPAIGN_CURRENCIES.map(c => [c.code, c]));
 
+const escH = (s) => String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
 window.getCurrencyFlagHtml = function (c) {
   const raw = String(c?.flag || DEF_BY_CODE[c?.code]?.flag || '').trim();
-  const url = /^(https?:\/\/|\/|data:image\/)/i.test(raw) ? raw : (/^[a-zA-Z]{2}$/.test(raw) ? `https://flagcdn.com/w40/${raw.toLowerCase()}.png` : '');
-  if (url) return `<img class="flag-svg" src="${url}" alt="${c.code || ''}" style="object-fit:cover;border-radius:2px;">`;
-  return raw ? `<span class="flag-svg" style="display:inline-flex;align-items:center;justify-content:center;font-size:0.8rem;">${raw}</span>` : '';
+  const url = /^(https?:\/\/|\/|data:image\/(png|jpe?g|webp|gif);)/i.test(raw) ? raw : (/^[a-zA-Z]{2}$/.test(raw) ? `https://flagcdn.com/w40/${raw.toLowerCase()}.png` : '');
+  if (url) return `<img class="flag-svg" src="${escH(url)}" alt="${escH(c?.code || '')}" style="object-fit:cover;border-radius:2px;">`;
+  return raw ? `<span class="flag-svg" style="display:inline-flex;align-items:center;justify-content:center;font-size:0.8rem;">${escH(raw)}</span>` : '';
 };
 
 function parseFsVal(v) {
@@ -84,8 +85,8 @@ window.cloudSubmitOrder = async function (order) {
   for (const b of STUDIO_BASES) { try { const r = await fetch(`${b}/api/campaign-orders`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Source': 'public-portal' }, body: JSON.stringify(order) }); if (r.ok) return true; } catch (_) {} }
   try {
     const fields = Object.fromEntries(Object.entries(order).map(([k, v]) => [k, toFsVal(v)]));
-    await fetch(`${FS_BASE}/campaign_orders/${encodeURIComponent(order.id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) });
-  } catch (_) {}
+    const r = await fetch(`${FS_BASE}/campaign_orders/${encodeURIComponent(order.id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) }); if (r.ok) return true;
+  } catch (_) {} return false;
 };
 
 window.cloudFetchStatuses = async function (idsCsv) {

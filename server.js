@@ -13,6 +13,9 @@ const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
 
   let urlPath = '/';
@@ -27,10 +30,10 @@ const server = http.createServer((req, res) => {
     return res.end(JSON.stringify({ success: true, port: currentPort, ip: getLocalIPv4(), service: 'Add Campaign Public Portal' }));
   }
 
-  let reqFile = urlPath === '/' ? '/index.html' : urlPath;
-  const filePath = path.join(__dirname, reqFile);
-  const isPrivate = /^\/(data|scripts|node_modules|\.git)(\/|$)|^\/\.env|^\/(server\.js|package\.json|.*\.bat|.*\.md)$/i.test(reqFile);
-  if (!filePath.startsWith(__dirname) || isPrivate) {
+  const reqFile = (urlPath === '/' ? '/index.html' : urlPath).replace(/\\/g, '/');
+  const filePath = path.resolve(__dirname, '.' + reqFile);
+  const isPrivate = /(^|\/)\.|^\/(data|scripts|node_modules)(\/|$)|^\/(server\.js|package(-lock)?\.json|.*\.bat|.*\.md)$/i.test(reqFile);
+  if (!filePath.startsWith(__dirname + path.sep) || isPrivate) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
     return res.end('403 Forbidden');
   }

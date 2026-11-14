@@ -1,0 +1,26 @@
+{
+  "name": "নকশা ল্যাব • অ্যাড বুস্টিং ও অর্ডার ক্যালকুলেটর",
+  "short_name": "নকশা ল্যাব অ্যাডস",
+  "description": "অফলাইন ও অনলাইন অ্যাড বুস্টিং বাজেট ক্যালকুলেটর ও সরাসরি অর্ডার পোর্টাল",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#4f46e5",
+  "background_color": "#eef2ff",
+  "lang": "bn",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/ayewcaxj/image/upload/v1793690710/NL_Add_Campaing_pkdeij.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://res.cloudinary.com/ayewcaxj/image/upload/v1793690710/NL_Add_Campaing_pkdeij.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

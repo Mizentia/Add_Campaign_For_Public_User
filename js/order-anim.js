@@ -46,14 +46,18 @@
     if (getRemainingSec() > 0) cdTimer = setInterval(tick, 500);
   }
 
-  function showFloatingToast(title, sub, durationMs = 1250) {
+  let toastT1 = 0, toastT2 = 0;
+  function showFloatingToast(title, sub, durationMs = 1250, isWarn = false) {
     const el = document.getElementById('orderConfirmToast');
     if (!el) return;
+    clearTimeout(toastT1); clearTimeout(toastT2);
+    el.classList.toggle('is-warn', Boolean(isWarn));
+    const ico = el.querySelector('.confirm-float-ico'); if (ico) ico.textContent = isWarn ? '⚠️' : '✅';
     el.querySelector('#confirmToastTitle').textContent = title;
     el.querySelector('#confirmToastSub').textContent = sub;
     el.classList.remove('hidden', 'fly-to-menu');
-    setTimeout(() => el.classList.add('fly-to-menu'), durationMs);
-    setTimeout(() => el.classList.add('hidden'), durationMs + 380);
+    toastT1 = setTimeout(() => el.classList.add('fly-to-menu'), durationMs);
+    toastT2 = setTimeout(() => el.classList.add('hidden'), durationMs + 380);
   }
 
   function playOrderSuccessSequence(orderId, prevCount, newCount) {

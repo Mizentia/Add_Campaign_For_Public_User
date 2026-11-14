@@ -40,7 +40,8 @@
   }
 
   window.getPlatformLogoHtml = function (p) {
-    const src = String(p?.logo || DEF_BY_ID[String(p?.id || '').toLowerCase()]?.logo || '').trim();
+    const raw = String(p?.logo || DEF_BY_ID[String(p?.id || '').toLowerCase()]?.logo || '').trim();
+    const src = /^(https?:\/\/|\/|data:image\/(png|jpe?g|webp|svg\+xml)[;,])/i.test(raw) ? raw.replace(/"/g, '&quot;') : '';
     return src ? `<img class="plat-svg" src="${src}" alt="${String(p?.nameEn || p?.id || '').replace(/"/g, '&quot;')}" style="object-fit:contain;">` : '';
   };
 
