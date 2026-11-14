@@ -85,7 +85,7 @@
     window.OrderAnim?.markCooldownStart(60); window.OrderAnim?.playOrderSuccessSequence(id, prevCount, localList.length); syncOrderStatuses();
   }
   window.CampaignOrders = {
-    init(ctx) { ctxRef = ctx; window.OrderAnim?.init(ctx); window.OrderAnim?.updateBadge(getOrders().length, false); ensureEntryGate(); syncOrderStatuses(); setInterval(() => { if (!document.hidden) syncOrderStatuses(); }, 4000); document.addEventListener('visibilitychange', () => { if (!document.hidden) syncOrderStatuses(); }); },
+    init(ctx) { ctxRef = ctx; window.OrderAnim?.init(ctx); window.OrderAnim?.updateBadge(getOrders().length, false); ensureEntryGate(); syncOrderStatuses(); let bgTick = 0; setInterval(() => { if (!document.hidden && (ordersModalOpen || (++bgTick % 5 === 0))) syncOrderStatuses(); }, 4000); document.addEventListener('visibilitychange', () => { if (!document.hidden) syncOrderStatuses(); }); },
     openOrdersModal() { askClearConfirm = false; justClearedMsg = false; renderOrdersModal(); syncOrderStatuses(); },
     openProfileEdit() { ensureEntryGate(null, true); },
     markModalClosed() { ordersModalOpen = false; askClearConfirm = false; justClearedMsg = false; },
