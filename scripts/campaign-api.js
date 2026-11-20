@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { parseJson } = require('./server-utils');
-const { studioFetch, forwardOrder, queueOrder, flushQueue, fetchStatuses } = require('./studio-bridge');
+const { studioFetch, fetchFirestoreSettings, forwardOrder, queueOrder, flushQueue, fetchStatuses } = require('./studio-bridge');
 
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'campaign-settings.json');
 const COOLDOWN_MS = 60 * 1000;
@@ -74,13 +74,16 @@ async function handleOrderStatus(req, res) {
   return sendJson(res, 200, { ...result, checkedAt: new Date().toISOString() });
 }
 
+let settingsCache = null, settingsCacheAt = 0;
 async function handleGetSettings(req, res) {
-  let settings = null;
-  try { if (fs.existsSync(SETTINGS_FILE)) settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8')); } catch (_) {}
-  if (!settings) {
-    const remote = await studioFetch('/api/campaign-settings');
-    if (remote?.settings) settings = remote.settings;
+  if (settingsCache && Date.now() - settingsCacheAt < 15000) return sendJson(res, 200, { success: true, settings: settingsCache });
+  let settings = (await studioFetch('/api/campaign-settings'))?.settings || await fetchFirestoreSettings();
+  if (settings && (Array.isArray(settings.currencies) || Array.isArray(settings.platforms))) {
+    settingsCache = settings; settingsCacheAt = Date.now();
+    try { fs.mkdirSync(path.dirname(SETTINGS_FILE), { recursive: true }); fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2), 'utf8'); } catch (_) {}
+    return sendJson(res, 200, { success: true, settings });
   }
+  try { if (fs.existsSync(SETTINGS_FILE)) settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8')); } catch (_) {}
   return sendJson(res, 200, { success: true, settings: settings || {} });
 }
 

@@ -3,27 +3,23 @@ const fs = require('fs');
 const path = require('path');
 
 const QUEUE_FILE = path.join(__dirname, '..', 'data', 'pending-orders.json');
-const FS_ORDERS_BASE = 'https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents/campaign_orders';
+const FS_ROOT = 'https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents';
+const FS_ORDERS_BASE = `${FS_ROOT}/campaign_orders`;
 const TIMEOUT_MS = 6000;
 
-function studioUrls() {
-  const list = [process.env.ADMIN_STUDIO_URL, 'http://127.0.0.1:3001', 'http://localhost:3001', 'https://nl-admin-studio.vercel.app'];
-  return [...new Set(list.filter(Boolean).map(u => u.replace(/\/+$/, '')))];
+function parseFsVal(v) {
+  if (!v) return null; if ('stringValue' in v) return v.stringValue; if ('booleanValue' in v) return Boolean(v.booleanValue);
+  if ('integerValue' in v || 'doubleValue' in v) return Number(v.integerValue ?? v.doubleValue);
+  if ('arrayValue' in v) return (v.arrayValue.values || []).map(parseFsVal);
+  return 'mapValue' in v ? Object.fromEntries(Object.entries(v.mapValue.fields || {}).map(([k, val]) => [k, parseFsVal(val)])) : null;
 }
+
+function studioUrls() { const l = [process.env.ADMIN_STUDIO_URL, 'http://127.0.0.1:3001', 'http://localhost:3001', 'https://nl-admin-studio.vercel.app']; return [...new Set(l.filter(Boolean).map(u => u.replace(/\/+$/, '')))]; }
 
 const toFsVal = (v) => typeof v === 'boolean' ? { booleanValue: v } : (typeof v === 'number' && Number.isFinite(v) ? (Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v }) : { stringValue: String(v ?? '') });
 const fromFsFields = (f = {}) => Object.fromEntries(Object.entries(f).map(([k, v]) => [k, 'stringValue' in v ? v.stringValue : ('integerValue' in v ? Number(v.integerValue) : ('doubleValue' in v ? Number(v.doubleValue) : ('booleanValue' in v ? Boolean(v.booleanValue) : null)))]));
-
-function readQueue() {
-  try { return JSON.parse(fs.readFileSync(QUEUE_FILE, 'utf8') || '[]'); } catch (_) { return []; }
-}
-
-function writeQueue(list) {
-  try {
-    fs.mkdirSync(path.dirname(QUEUE_FILE), { recursive: true });
-    fs.writeFileSync(QUEUE_FILE, JSON.stringify(list.slice(-500), null, 2), 'utf8');
-  } catch (_) {}
-}
+const readQueue = () => { try { return JSON.parse(fs.readFileSync(QUEUE_FILE, 'utf8') || '[]'); } catch (_) { return []; } };
+const writeQueue = (list) => { try { fs.mkdirSync(path.dirname(QUEUE_FILE), { recursive: true }); fs.writeFileSync(QUEUE_FILE, JSON.stringify(list.slice(-500), null, 2), 'utf8'); } catch (_) {} };
 
 async function studioFetch(route, options = {}) {
   for (const base of studioUrls()) {
@@ -85,6 +81,14 @@ async function fetchStatuses(ids) {
   return { success: Object.keys(statuses).length > 0, statuses };
 }
 
+async function fetchFirestoreSettings() {
+  try {
+    const r = await fetch(`${FS_ROOT}/ecosystem/portalSettings`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+    if (r.ok) return parseFsVal((await r.json())?.fields?.value)?.campaign || null;
+  } catch (_) {}
+  return null;
+}
+
 setInterval(() => { flushQueue().catch(() => {}); }, 30000).unref();
 
-module.exports = { studioFetch, forwardOrder, queueOrder, flushQueue, fetchStatuses };
+module.exports = { studioFetch, fetchFirestoreSettings, forwardOrder, queueOrder, flushQueue, fetchStatuses };

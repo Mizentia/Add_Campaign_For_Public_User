@@ -54,32 +54,28 @@ function parseFsVal(v) {
   return null;
 }
 const toFsVal = (v) => typeof v === 'boolean' ? { booleanValue: v } : (typeof v === 'number' && Number.isFinite(v) ? (Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v }) : { stringValue: String(v ?? '') });
-const FS_BASE = 'https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents', STUDIO_BASES = ['https://nl-admin-studio.vercel.app', 'http://localhost:3001'];
+const FS_BASE = 'https://firestore.googleapis.com/v1/projects/metaaccountmanager/databases/(default)/documents', STUDIO_BASES = ['https://nl-admin-studio.vercel.app', 'http://localhost:3001'], CFG_CACHE_KEY = 'nl_camp_cfg_cache';
+const fetchWithTimeout = (url, opts = {}, ms = 4500) => { const sig = typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(ms) : undefined; return fetch(url, sig ? { ...opts, signal: sig } : opts); };
+const optimizeLogoUrl = (u) => (typeof u === 'string' && /res\.cloudinary\.com\/[^/]+\/image\/upload\/(?!c_pad,)/i.test(u)) ? u.replace(/\/image\/upload\//i, '/image/upload/c_pad,w_192,h_192,b_transparent,f_png/') : u;
 
+window.getCachedStudioCampaignConfig = () => { try { return JSON.parse(localStorage.getItem(CFG_CACHE_KEY) || 'null'); } catch (_) { return null; } };
 window.syncPublicCampaignBrandLogo = async function () {
   try {
-    const fsRes = await fetch(`${FS_BASE}/ecosystem/projects`).then(x => x.ok ? x.json() : null);
+    const fsRes = await fetchWithTimeout(`${FS_BASE}/ecosystem/projects`).then(x => x.ok ? x.json() : null);
     const proj = (parseFsVal(fsRes?.fields?.value) || []).find(p => p && (p.id === 'add-campaign-for-public-user' || p.id === 'proj-campaign-public' || p.dirName === 'Add_Campaign_For_Public_User' || Number(p.port) === 8088));
-    if (proj?.logo) ['brandLogoImg', 'appFavicon', 'appAppleIcon'].forEach((id, i) => { const el = document.getElementById(id); if (el) el[i === 0 ? 'src' : 'href'] = proj.logo; });
+    if (proj?.logo) { const src = optimizeLogoUrl(proj.logo); ['brandLogoImg', 'appFavicon', 'appAppleIcon'].forEach((id, i) => { const el = document.getElementById(id); if (el) el[i === 0 ? 'src' : 'href'] = src; }); }
   } catch (_) {}
 };
-
 window.fetchStudioCampaignConfig = async function () {
   window.syncPublicCampaignBrandLogo();
+  const saveCfg = (s) => { try { localStorage.setItem(CFG_CACHE_KEY, JSON.stringify(s)); } catch (_) {} return s; };
   for (const url of ['./api/campaign-settings', ...STUDIO_BASES.map(b => `${b}/api/campaign-settings`)]) {
-    try { const r = await fetch(url, { cache: 'no-store' }).then(x => x.ok ? x.json() : null); if (r?.settings && (Array.isArray(r.settings.currencies) || Array.isArray(r.settings.platforms))) return r.settings; } catch (_) {}
+    try { const r = await fetchWithTimeout(url, { cache: 'no-store' }).then(x => x.ok ? x.json() : null); if (r?.settings && (Array.isArray(r.settings.currencies) || Array.isArray(r.settings.platforms))) return saveCfg(r.settings); } catch (_) {}
   }
-  try {
-    const fsRes = await fetch(`${FS_BASE}/ecosystem/portalSettings`, { cache: 'no-store' }).then(x => x.ok ? x.json() : null);
-    const parsed = parseFsVal(fsRes?.fields?.value); if (parsed?.campaign) return parsed.campaign;
-  } catch (_) {}
-  return { currencies: window.DEFAULT_CAMPAIGN_CURRENCIES, platforms: window.DEFAULT_CAMPAIGN_PLATFORMS };
+  try { const fsRes = await fetchWithTimeout(`${FS_BASE}/ecosystem/portalSettings`, { cache: 'no-store' }).then(x => x.ok ? x.json() : null); const parsed = parseFsVal(fsRes?.fields?.value); if (parsed?.campaign) return saveCfg(parsed.campaign); } catch (_) {}
+  return window.getCachedStudioCampaignConfig() || { currencies: window.DEFAULT_CAMPAIGN_CURRENCIES, platforms: window.DEFAULT_CAMPAIGN_PLATFORMS };
 };
-
-window.fetchStudioCampaignCurrencies = async function () {
-  const cfg = await window.fetchStudioCampaignConfig();
-  return Array.isArray(cfg?.currencies) && cfg.currencies.length ? cfg.currencies : window.DEFAULT_CAMPAIGN_CURRENCIES;
-};
+window.fetchStudioCampaignCurrencies = async () => { const cfg = await window.fetchStudioCampaignConfig(); return Array.isArray(cfg?.currencies) && cfg.currencies.length ? cfg.currencies : window.DEFAULT_CAMPAIGN_CURRENCIES; };
 
 window.cloudSubmitOrder = async function (order) {
   for (const b of STUDIO_BASES) { try { const r = await fetch(`${b}/api/campaign-orders`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Source': 'public-portal' }, body: JSON.stringify(order) }); if (r.ok) return true; } catch (_) {} }

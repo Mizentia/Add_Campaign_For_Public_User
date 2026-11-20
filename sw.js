@@ -1,20 +1,20 @@
-const CACHE_NAME = 'nl-camp-pwa-v1';
+const CACHE_NAME = 'nl-camp-pwa-v2';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './manifest.json',
-  './css/theme.css?v=20261114_3',
-  './css/style.css?v=20261114_3',
-  './css/orders.css?v=20261114_3',
-  './css/calculator.css?v=20261114_3',
-  './js/i18n.js?v=20261114_3',
-  './js/platforms.js?v=20261114_3',
-  './js/currencies.js?v=20261114_3',
-  './js/calc-ui.js?v=20261114_3',
-  './js/curr-drop.js?v=20261114_3',
-  './js/order-anim.js?v=20261114_3',
-  './js/orders.js?v=20261114_3',
-  './js/app.js?v=20261114_3'
+  './manifest.json?v=20261120_1',
+  './css/theme.css?v=20261120_1',
+  './css/style.css?v=20261120_1',
+  './css/orders.css?v=20261120_1',
+  './css/calculator.css?v=20261120_1',
+  './js/i18n.js?v=20261120_1',
+  './js/platforms.js?v=20261120_1',
+  './js/currencies.js?v=20261120_1',
+  './js/calc-ui.js?v=20261120_1',
+  './js/curr-drop.js?v=20261120_1',
+  './js/order-anim.js?v=20261120_1',
+  './js/orders.js?v=20261120_1',
+  './js/app.js?v=20261120_1'
 ];
 
 self.addEventListener('install', (e) => {
@@ -36,7 +36,7 @@ self.addEventListener('fetch', (e) => {
   const trusted = url.origin === self.location.origin || /(googleapis\.com|gstatic\.com|flagcdn\.com|res\.cloudinary\.com)$/i.test(url.hostname);
   if (!trusted) return;
 
-  if (req.mode === 'navigate' || url.pathname.endsWith('/api/campaign-settings')) {
+  if (req.mode === 'navigate' || url.pathname.endsWith('/api/campaign-settings') || url.pathname.endsWith('/manifest.json')) {
     e.respondWith(
       fetch(req).then(res => {
         if (res.ok) { const cl = res.clone(); caches.open(CACHE_NAME).then(c => c.put(req, cl)); }

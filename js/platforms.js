@@ -49,4 +49,26 @@
     if (!Array.isArray(list) || !list.length) return window.DEFAULT_CAMPAIGN_PLATFORMS.map(normalizePlat);
     return list.map(normalizePlat);
   };
+
+  window.resolveCurrencyNotice = function (curr, plat) {
+    if (!curr) return null;
+    const platKeys = [plat?.id, plat?.nameEn, plat?.nameBn].map(x => String(x || '').toLowerCase().trim()).filter(Boolean);
+    const pn = curr.platformNotices && typeof curr.platformNotices === 'object' ? curr.platformNotices : null;
+    if (pn) {
+      const match = Object.entries(pn).find(([k]) => platKeys.includes(String(k || '').toLowerCase().trim()));
+      if (match) {
+        const v = match[1];
+        if (typeof v === 'string') return { noticeEnabled: Boolean(v.trim()), noticeBn: v.trim(), noticeEn: v.trim(), notice: v.trim(), signalType: curr.signalType || 'info' };
+        if (v && typeof v === 'object') {
+          const bn = String(v.noticeBn || v.notice || '').trim(), en = String(v.noticeEn || '').trim();
+          return { noticeEnabled: Boolean(v.noticeEnabled && (bn || en)), noticeBn: bn, noticeEn: en, notice: bn || en, signalType: v.signalType || curr.signalType || 'info' };
+        }
+      }
+    }
+    const np = Array.isArray(curr.noticePlatforms) ? curr.noticePlatforms.map(x => String(x || '').toLowerCase().trim()).filter(Boolean) : [];
+    if (np.length && !platKeys.some(k => np.includes(k))) {
+      return { noticeEnabled: false, noticeBn: '', noticeEn: '', notice: '', signalType: 'none' };
+    }
+    return curr;
+  };
 })();
