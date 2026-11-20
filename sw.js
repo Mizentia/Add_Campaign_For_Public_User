@@ -1,8 +1,8 @@
-const CACHE_NAME = 'nl-camp-pwa-v2';
+const CACHE_NAME = 'nl-camp-pwa-v3';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './manifest.json?v=20261120_1',
+  './manifest.json?v=20261120_2',
   './css/theme.css?v=20261120_1',
   './css/style.css?v=20261120_1',
   './css/orders.css?v=20261120_1',
